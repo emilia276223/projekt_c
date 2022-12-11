@@ -16,6 +16,8 @@ card cards[4][13];//[i][j][k] - i-ty gracz, [j] j - ta karta
 int score[4];//score of players
 
 char znaczek[5] = {'N', 'h', 'd', 's', 'c'};
+//char wartosc[13] = {}
+//char 
 
 card wszystkie_karty[52];
 
@@ -23,6 +25,7 @@ void generate_cards(){
 	for(int i = 0; i < 52; i ++){
 		wszystkie_karty[i].color = i/13 + 1;
 		wszystkie_karty[i].num = i%13 + 2;
+		printf("karta: %i, %c\n", wszystkie_karty[i].num, znaczek[wszystkie_karty[i].color]);
 	}
 }
 
