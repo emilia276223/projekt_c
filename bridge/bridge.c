@@ -2,6 +2,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #define DEBUG 1
 
@@ -16,16 +17,27 @@ card cards[4][13];//[i][j][k] - i-ty gracz, [j] j - ta karta
 int score[4];//score of players
 
 char znaczek[5] = {'N', 'h', 'd', 's', 'c'};
-//char wartosc[13] = {}
-//char 
+char wartosc[][13] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 
 card wszystkie_karty[52];
 
-void generate_cards(){
+void print(card karta){
+	printf(" (%s %c)",wartosc[karta.num], znaczek[karta.color]);
+}
+
+void clear_screen(){
+	//jak wyczyscic ekran ??
+}
+
+void generate_cards(){//dziala
 	for(int i = 0; i < 52; i ++){
 		wszystkie_karty[i].color = i/13 + 1;
 		wszystkie_karty[i].num = i%13 + 2;
-		printf("karta: %i, %c\n", wszystkie_karty[i].num, znaczek[wszystkie_karty[i].color]);
+//		if(DEBUG){
+//			 printf("karta:");
+//			 print(wszystkie_karty[i]);
+//			 printf("\n");
+//		}
 	}
 }
 
@@ -40,13 +52,6 @@ card deal;//first - number (1 - 7), second - color
 
 void dealing_cards(){
 	//randomised cards
-	
-	
-	//na ten moment wpisywane recznie
-	/*for(int i = 0; i < 13; i++){//wpisuje graczowi 0
-		scanf("%i %i",&cards[0][i].num, &cards[0][i].color);
-	}*/
-	
 	
 	//podzielenie na graczy
 	for(int i = 0; i < 52; i ++){
@@ -94,8 +99,10 @@ void sort_by_color(card *tab, int ile){
 	}
 }
 
-card system_z_grubsza(int player, int czy_otwarcie){
+card system_z_grubsza(int player){
 	card wynik;
+	int czy_otwarcie = 1;
+	//trzeba to sprawdzic, bede w stanie jak bedzie zapis licytacji
 	if(czy_otwarcie == 1){
 		//policzenie ilosci figur
 		int figury = 0;
@@ -151,7 +158,7 @@ card system_z_grubsza(int player, int czy_otwarcie){
 void show_cards(int player){
 	printf("\nkarty gracza %i:\n", player + 1);
 	for(int i = 0; i < 13; i++){//wpisuje graczowi 0
-		printf("(%i %c), ",cards[player][i].num, znaczek[cards[0][i].color]);
+		print(cards[player][i]);
 	}
 	printf("\n");
 }
@@ -169,8 +176,23 @@ void auction(){
 	char c;
 	int color;
 	while(count < 3){
-		printf("Kolej gracza %i\n wpisz odpowiednio jak wysoko chcesz zalicytować (1 - 7) \noraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo 0 jesli pass\n", player + 1);
+		clear_screen;
+		printf("Kolej gracza %i\n", player + 1);
+		printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: (1 - 7) \noraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo 0 jesli pass\n");
+		printf("a to twoje karty :");
+		show_cards(player);
+		printf("na ten moment zalicytowane jest:\n");
+		print(deal);
+		printf("\n");
+		printf("jesli chcesz uzyskać podpowiedź do licytacji napisz -1");
+		printf("\n");
 		scanf("%i", &number);
+		if(number == -1){
+			printf("\nTwoja podpowiedz do licytacji w sysyemie 'z grubsza' to:\n");
+			print(system_z_grubsza(player));
+			printf("\n");
+			printf("Co chcesz zalicytować?\n");
+		}
 		if(number == 0){
 			count ++;
 			player = (player + 1)%4;
@@ -197,7 +219,9 @@ void auction(){
 		}
 	}
 	if(DEBUG){
-		printf("licytacja zakonczona na (%i, %c)\n", deal.num, znaczek[deal.color]);
+		printf("licytacja zakonczona na ");
+		print(deal);
+		printf("\n");
 	}
 }
 
@@ -210,16 +234,17 @@ void new_game(){
 	deal.color = 0;
 	generate_cards();
 	dealing_cards();
-	if(DEBUG){
-		show_cards(0);
-		show_cards(1);
-		show_cards(2);
-		show_cards(3);
-	}
+//	if(DEBUG){
+//		show_cards(0);
+//		show_cards(1);
+//		show_cards(2);
+//		show_cards(3);
+//	}
 }
 
 int main(){
 //	auction();
 	new_game();
 	auction();
+	//do licytacji dopisac zapamietywanie ostatnich czterech (czyli dla kazdego z graczy), bo to trzeba pokazywac i przyda sie do z grubsza
 }
