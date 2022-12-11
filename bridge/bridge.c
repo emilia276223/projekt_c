@@ -14,6 +14,8 @@ typedef struct card card;
 card cards[4][13];//[i][j][k] - i-ty gracz, [j][0] - numer karty, j[1] - kolor
 int score[4];//score of players
 
+char znaczek[5] = {'N', 'h', 'd', 's', 'c'};
+
 
 card deal;//first - number (1 - 7), second - color
 //colors:
@@ -25,20 +27,24 @@ card deal;//first - number (1 - 7), second - color
 
 void dealing_cards(){
 	//randomised cards
+	//na ten moment wpisywane recznie
+	for(int i = 0; i < 13; i++){//wpisuje graczowi 0
+		scanf("%i %i",&cards[0][i].num, &cards[0][i].color);
+	}
 }
 
 void sort_by_num(card *tab, int ile){//od najmniejszej do najwiekszej
 	//bubble sort bo czemu nie skoro i tak malo
-	int count = -1;
+//	int count = -1;
 	for(int i = 0; i < ile; i ++){
-		count = 0;
+//		count = 0;
 		for(int j = 1; j < ile - i; j ++){
 //			if(tab[j-1] -> num > tab[j] -> num || (tab[j-1] -> num > tab[j] -> num && tab[j-1] -> color < tab[j] -> color)){
 //				card temp = *tab[j-1];
 //				*tab[j-1] = *tab[j];
 //				*tab[j] = temp;
 //			}
-			if((tab + j - 1) -> num > (tab + j) -> num || ((tab + j- 1) -> num > (tab + j) -> num && (tab + j - 1) -> color < (tab + j) -> color)){
+			if((tab + j - 1) -> num > (tab + j) -> num || ((tab + j- 1) -> num == (tab + j) -> num && (tab + j - 1) -> color < (tab + j) -> color)){
 				card temp = *(tab + j - 1);
 				*(tab + j - 1) = *(tab + j);
 				*(tab + j) = temp;
@@ -49,7 +55,22 @@ void sort_by_num(card *tab, int ile){//od najmniejszej do najwiekszej
 
 void sort_by_color(card *tab, int ile){
 	//bubble sort
-	
+	//	int count = -1;
+	for(int i = 0; i < ile; i ++){
+//		count = 0;
+		for(int j = 1; j < ile - i; j ++){
+//			if(tab[j-1] -> num > tab[j] -> num || (tab[j-1] -> num > tab[j] -> num && tab[j-1] -> color < tab[j] -> color)){
+//				card temp = *tab[j-1];
+//				*tab[j-1] = *tab[j];
+//				*tab[j] = temp;
+//			}
+			if((tab + j - 1) -> color > (tab + j) -> color || ((tab + j- 1) -> num < (tab + j) -> num && (tab + j - 1) -> color == (tab + j) -> color)){
+				card temp = *(tab + j - 1);
+				*(tab + j - 1) = *(tab + j);
+				*(tab + j) = temp;
+			}
+		}
+	}
 }
 
 card system_z_grubsza(int player, int czy_otwarcie){
@@ -107,7 +128,9 @@ card system_z_grubsza(int player, int czy_otwarcie){
 }
 
 void show_cards(int player){
-	//
+	for(int i = 0; i < 13; i++){//wpisuje graczowi 0
+		printf("(%i %c), ",cards[player][i].num, znaczek[cards[0][i].color]);
+	}
 }
 
 void show_last_trick(){//ostatnia lewa
@@ -159,5 +182,7 @@ void new_game(){
 }
 
 int main(){
-	auction();
+//	auction();
+	new_game();
+	show_cards(0);
 }
