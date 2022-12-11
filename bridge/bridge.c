@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define DEBUG 1
 
 struct card{
 	int num;
@@ -11,10 +12,19 @@ struct card{
 typedef struct card card;
 
 //it will always be: N is dealer, S is waiting, game starts from 
-card cards[4][13];//[i][j][k] - i-ty gracz, [j][0] - numer karty, j[1] - kolor
+card cards[4][13];//[i][j][k] - i-ty gracz, [j] j - ta karta
 int score[4];//score of players
 
 char znaczek[5] = {'N', 'h', 'd', 's', 'c'};
+
+card wszystkie_karty[52];
+
+void generate_cards(){
+	for(int i = 0; i < 52; i ++){
+		wszystkie_karty[i].color = i/13 + 1;
+		wszystkie_karty[i].num = i%13 + 2;
+	}
+}
 
 
 card deal;//first - number (1 - 7), second - color
@@ -27,9 +37,17 @@ card deal;//first - number (1 - 7), second - color
 
 void dealing_cards(){
 	//randomised cards
+	
+	
 	//na ten moment wpisywane recznie
-	for(int i = 0; i < 13; i++){//wpisuje graczowi 0
+	/*for(int i = 0; i < 13; i++){//wpisuje graczowi 0
 		scanf("%i %i",&cards[0][i].num, &cards[0][i].color);
+	}*/
+	
+	
+	//podzielenie na graczy
+	for(int i = 0; i < 52; i ++){
+		cards[i/13][i%13] = wszystkie_karty[i];
 	}
 }
 
@@ -128,9 +146,11 @@ card system_z_grubsza(int player, int czy_otwarcie){
 }
 
 void show_cards(int player){
+	printf("\nkarty gracza %i:\n", player + 1);
 	for(int i = 0; i < 13; i++){//wpisuje graczowi 0
 		printf("(%i %c), ",cards[player][i].num, znaczek[cards[0][i].color]);
 	}
+	printf("\n");
 }
 
 void show_last_trick(){//ostatnia lewa
@@ -139,35 +159,42 @@ void show_last_trick(){//ostatnia lewa
 
 void auction(){
 	//starts from player A
-	printf("LICYTACJA");
+	printf("\nLICYTACJA \n");
 	int count = 0;//how many times pass
 	int player = 0;//start at N
 	int number;
 	char c;
 	int color;
 	while(count < 3){
-		printf("Kolej gracza %i, wpisz odpowiednio jak wysoko chcesz zalicytować (1 - 7) oraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo p jesli pass\n", player + 1);
-		number = getchar();
-		if(number == 'p'){
+		printf("Kolej gracza %i\n wpisz odpowiednio jak wysoko chcesz zalicytować (1 - 7) \noraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo 0 jesli pass\n", player + 1);
+		scanf("%i", &number);
+		if(number == 0){
 			count ++;
 			player = (player + 1)%4;
 		}
-		else{
-			while(scanf("%c", &c) < 1){//if someone enters wrong thing
+		else{	
+			if(scanf(" %c", &c) < 1){//if someone enters wrong thing
 				printf("niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
 			}
-			if(c == 'n') color = 0;
-			if(c == 'h') color = 1;
-			if(c == 'd') color = 2;
-			if(c == 's') color = 3;
-			if(c == 'c') color = 4;
-			if(number < deal.num || (number == deal.num && color > deal.color)) printf("to jest mniej niż poprzednio, wiec nie mozna tego zalicytowac");
+//			scanf(" %c", &c);
 			else{
-				deal.num = number;
-				deal.color = color;
-				player = (player + 1)%4;
+				count = 0;
+				if(c == 'n' || c == 'N') color = 0;
+				if(c == 'h' || c == 'H') color = 1;
+				if(c == 'd' || c == 'D') color = 2;
+				if(c == 's' || c == 'S') color = 3;
+				if(c == 'c' || c == 'C') color = 4;
+				if(number < deal.num || (number == deal.num && color > deal.color)) printf("to jest mniej niż poprzednio, wiec nie mozna tego zalicytowac \n");
+				else{
+					deal.num = number;
+					deal.color = color;
+					player = (player + 1)%4;
+				}
 			}
 		}
+	}
+	if(DEBUG){
+		printf("licytacja zakonczona na (%i, %c)\n", deal.num, znaczek[deal.color]);
 	}
 }
 
@@ -178,11 +205,18 @@ void runda(){
 void new_game(){
 	deal.num = 0;
 	deal.color = 0;
+	generate_cards();
 	dealing_cards();
+	if(DEBUG){
+		show_cards(0);
+		show_cards(1);
+		show_cards(2);
+		show_cards(3);
+	}
 }
 
 int main(){
 //	auction();
 	new_game();
-	show_cards(0);
+	auction();
 }
