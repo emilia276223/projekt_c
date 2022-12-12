@@ -16,23 +16,18 @@ typedef struct card card;
 card cards[4][13];//[i][j][k] - i-ty gracz, [j] j - ta karta
 int score[4];//score of players
 
-char znaczek[5] = {'N', 'h', 'd', 's', 'c'};
-char wartosc[][13] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
-
 card wszystkie_karty[52];
 
-void print(card karta){
-	printf(" (%s %c)",wartosc[karta.num], znaczek[karta.color]);
-}
+extern void print(card karta);
 
-void clear_screen(){
-	//jak wyczyscic ekran ??
-}
+extern void clear_screen();
 
-void generate_cards(){//dziala
+
+//karty
+void generate_cards(card *wszystkie_karty){
 	for(int i = 0; i < 52; i ++){
-		wszystkie_karty[i].color = i/13 + 1;
-		wszystkie_karty[i].num = i%13 + 2;
+		(wszystkie_karty + i) -> color = i/13 + 1;
+		(wszystkie_karty + i) -> num = i%13 + 2;
 //		if(DEBUG){
 //			 printf("karta:");
 //			 print(wszystkie_karty[i]);
@@ -50,7 +45,7 @@ card deal;//first - number (1 - 7), second - color
 //3 - spades
 //4 - clubs
 
-void dealing_cards(){
+void dealing_cards(){//karty
 	//randomised cards
 	
 	//podzielenie na graczy
@@ -59,6 +54,7 @@ void dealing_cards(){
 	}
 }
 
+//karty
 void sort_by_num(card *tab, int ile){//od najmniejszej do najwiekszej
 	//bubble sort bo czemu nie skoro i tak malo
 //	int count = -1;
@@ -79,6 +75,7 @@ void sort_by_num(card *tab, int ile){//od najmniejszej do najwiekszej
 	}
 }
 
+//karty
 void sort_by_color(card *tab, int ile){
 	//bubble sort
 	//	int count = -1;
@@ -155,13 +152,9 @@ card system_z_grubsza(int player){
 	
 }
 
-void show_cards(int player){
-	printf("\nkarty gracza %i:\n", player + 1);
-	for(int i = 0; i < 13; i++){//wpisuje graczowi 0
-		print(cards[player][i]);
-	}
-	printf("\n");
-}
+//wyswietlanie
+//jeszcze nie gotowe
+void show_cards(card *karty, int ile, int numer_gracza);
 
 void show_last_trick(){//ostatnia lewa
 	
@@ -180,7 +173,7 @@ void auction(){
 		printf("Kolej gracza %i\n", player + 1);
 		printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: (1 - 7) \noraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo 0 jesli pass\n");
 		printf("a to twoje karty :");
-		show_cards(player);
+		show_cards(&cards[player][0], 13, player);
 		printf("na ten moment zalicytowane jest:\n");
 		print(deal);
 		printf("\n");
@@ -232,8 +225,9 @@ void runda(){
 void new_game(){
 	deal.num = 0;
 	deal.color = 0;
-	generate_cards();
+	generate_cards(&wszystkie_karty[0]);
 	dealing_cards();
+	clear_screen();
 //	if(DEBUG){
 //		show_cards(0);
 //		show_cards(1);
