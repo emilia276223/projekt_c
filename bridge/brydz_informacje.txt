@@ -15,7 +15,7 @@ Gra na ten moment nie ma możliwośći gry z komputerem, co wynika z braku istni
 
 
 Grę należy odpalać w terminalu wpisując:
-gcc bridge.c obsluga_wyswietlania.c
+gcc bridge.c obsluga_wyswietlania.c obsluga_kart.c
 
 a następnie:
 

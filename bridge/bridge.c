@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
 
 #define DEBUG 1
 
@@ -11,6 +12,7 @@ struct card{
 	int color;
 };
 typedef struct card card;
+
 
 //it will always be: N is dealer, S is waiting, game starts from 
 card cards[4][13];//[i][j][k] - i-ty gracz, [j] j - ta karta
@@ -23,19 +25,15 @@ extern void print(card karta);
 extern void clear_screen();
 
 
-//karty
-void generate_cards(card *wszystkie_karty){
-	for(int i = 0; i < 52; i ++){
-		(wszystkie_karty + i) -> color = i/13 + 1;
-		(wszystkie_karty + i) -> num = i%13 + 2;
-//		if(DEBUG){
-//			 printf("karta:");
-//			 print(wszystkie_karty[i]);
-//			 printf("\n");
-//		}
-	}
-}
+extern void show_cards(card *karty, int ile, int numer_gracza);
 
+
+//karty
+extern void generate_cards(card *wszystkie_karty);
+
+extern void tasowanie(card *talia);
+
+extern void wyswietl_rozdanie(card *karty);
 
 card deal;//first - number (1 - 7), second - color
 //colors:
@@ -45,56 +43,24 @@ card deal;//first - number (1 - 7), second - color
 //3 - spades
 //4 - clubs
 
-void dealing_cards(){//karty
+void dealing_cards(){
 	//randomised cards
-	
+	tasowanie(&wszystkie_karty[0]);
 	//podzielenie na graczy
 	for(int i = 0; i < 52; i ++){
 		cards[i/13][i%13] = wszystkie_karty[i];
 	}
+	wyswietl_rozdanie(&wszystkie_karty[0]);
+	clear_screen();
+//	show_cards(&cards[0][0], 13, 0);
+//	show_cards(&cards[1][0], 13, 1);
+//	show_cards(&cards[2][0], 13, 2);
+//	show_cards(&cards[3][0], 13, 3);
 }
 
-//karty
-void sort_by_num(card *tab, int ile){//od najmniejszej do najwiekszej
-	//bubble sort bo czemu nie skoro i tak malo
-//	int count = -1;
-	for(int i = 0; i < ile; i ++){
-//		count = 0;
-		for(int j = 1; j < ile - i; j ++){
-//			if(tab[j-1] -> num > tab[j] -> num || (tab[j-1] -> num > tab[j] -> num && tab[j-1] -> color < tab[j] -> color)){
-//				card temp = *tab[j-1];
-//				*tab[j-1] = *tab[j];
-//				*tab[j] = temp;
-//			}
-			if((tab + j - 1) -> num > (tab + j) -> num || ((tab + j- 1) -> num == (tab + j) -> num && (tab + j - 1) -> color < (tab + j) -> color)){
-				card temp = *(tab + j - 1);
-				*(tab + j - 1) = *(tab + j);
-				*(tab + j) = temp;
-			}
-		}
-	}
-}
+void sort_by_num(card *tab, int ile);
 
-//karty
-void sort_by_color(card *tab, int ile){
-	//bubble sort
-	//	int count = -1;
-	for(int i = 0; i < ile; i ++){
-//		count = 0;
-		for(int j = 1; j < ile - i; j ++){
-//			if(tab[j-1] -> num > tab[j] -> num || (tab[j-1] -> num > tab[j] -> num && tab[j-1] -> color < tab[j] -> color)){
-//				card temp = *tab[j-1];
-//				*tab[j-1] = *tab[j];
-//				*tab[j] = temp;
-//			}
-			if((tab + j - 1) -> color > (tab + j) -> color || ((tab + j- 1) -> num < (tab + j) -> num && (tab + j - 1) -> color == (tab + j) -> color)){
-				card temp = *(tab + j - 1);
-				*(tab + j - 1) = *(tab + j);
-				*(tab + j) = temp;
-			}
-		}
-	}
-}
+void sort_by_color(card *tab, int ile);
 
 card system_z_grubsza(int player){
 	card wynik;
@@ -152,12 +118,8 @@ card system_z_grubsza(int player){
 	
 }
 
-//wyswietlanie
-//jeszcze nie gotowe
-void show_cards(card *karty, int ile, int numer_gracza);
-
 void show_last_trick(){//ostatnia lewa
-	
+	//
 }
 
 void auction(){
@@ -228,15 +190,11 @@ void new_game(){
 	generate_cards(&wszystkie_karty[0]);
 	dealing_cards();
 	clear_screen();
-//	if(DEBUG){
-//		show_cards(0);
-//		show_cards(1);
-//		show_cards(2);
-//		show_cards(3);
-//	}
 }
 
 int main(){
+	srand(time(NULL));
+
 //	auction();
 	new_game();
 	auction();
