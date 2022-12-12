@@ -12,3 +12,12 @@ Gra zawiera system wpomagania licytacji - gdy gracz chce dostać podpowiedź co 
 
 Gra na ten moment nie ma możliwośći gry z komputerem, co wynika z braku istnienia strategii wygrywającej. W przyszłośći jest szansa na powstanie opcji podpowiedzi do zagrywanych kart, ale nie zawsze podpowiedź jest najlepszym możliwym zagraniem.
 
+
+
+Grę należy odpalać w terminalu wpisując:
+gcc bridge.c obsluga_wyswietlania.c
+
+a następnie:
+
+./a.out
+
