@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 struct card{
 	int num;
@@ -24,11 +24,12 @@ extern void print(card karta);
 
 extern void clear_screen();
 
+extern void sort_by_num(card *tab, int ile);
+
+extern void sort_by_color(card *tab, int ile);
 
 extern void show_cards(card *karty, int ile, int numer_gracza);
 
-
-//karty
 extern void generate_cards(card *wszystkie_karty);
 
 extern void tasowanie(card *talia);
@@ -50,128 +51,76 @@ void dealing_cards(){
 	for(int i = 0; i < 52; i ++){
 		cards[i/13][i%13] = wszystkie_karty[i];
 	}
-	wyswietl_rozdanie(&wszystkie_karty[0]);
-	clear_screen();
-//	show_cards(&cards[0][0], 13, 0);
-//	show_cards(&cards[1][0], 13, 1);
-//	show_cards(&cards[2][0], 13, 2);
-//	show_cards(&cards[3][0], 13, 3);
+	//potasowanie kart kolorami
+	sort_by_color(&cards[0][0], 13);
+	sort_by_color(&cards[1][0], 13);
+	sort_by_color(&cards[2][0], 13);
+	sort_by_color(&cards[3][0], 13);
+	//wyswietlenie
+	wyswietl_rozdanie(&cards[0][0]);
 }
 
-void sort_by_num(card *tab, int ile);
+//card historia_licytacji[200];//maksymalna mozliwa liczba ruchow w licytacji
 
-void sort_by_color(card *tab, int ile);
 
-card system_z_grubsza(int player){
+extern int policz_punkty(card *karty);
+
+card naturalny_otwarcie(card *karty);
+
+
+card naturalny_odpowiedz(card *karty,int liczba_punktow, card poprzedni){
+	int kolory[5];
 	card wynik;
-	int czy_otwarcie = 1;
-	//trzeba to sprawdzic, bede w stanie jak bedzie zapis licytacji
-	if(czy_otwarcie == 1){
-		//policzenie ilosci figur
-		int figury = 0;
-		card kolory[5];
-		for(int i = 0; i < 13; i ++){
-			if(cards[player][i].num > 10){//jesli figura
-				figury++;
-			}
-			kolory[cards[player][i].color].num ++;
-		}
-		sort_by_num(&kolory[1], 4);
-		//jesli 2-3 renonse
-		if(kolory[3].num <= 2 || kolory[2].num <2){
-			wynik.num = 2;
-			wynik.color = 0;
-			return wynik;
-		}
-		//jesli ciekawa reka bez koloru
-//		if(kolory)
-		//jesli malo figur
-		if(figury < 3){
-			//jesli zrownowazony
-			if(kolory[4].num < 5){
-				wynik.num = 0;
-				return wynik;
-			}
-			//jesli niezrownowazony
-			wynik.num = 1;
-			wynik.color = 4;
-			return wynik;
-		}
-		//nie malo figur
-		if(figury <= 5){//srednio fugur
-			if(kolory[4].num < 5){//sklad zrownowazony
-				wynik.color = 2;
-				wynik.num = 1;
-				return wynik;
-			}
-			//niezrownowazony
-			wynik.num = 1;
-			wynik.color = 1;
-			return wynik;
-		}
+	for(int i = 0; i < 13; i++){
+		kolory[(karty + i) -> color]++;
 	}
-		//duzo figur
-	//nie otwarcie:
-	
-	//policz kolory
-	//czy_kolory mowi ktora to "moja" odzywka, odpowiednio (po posortowaniu ) mowie kolor[i]
-	
+	//dokonczyc
 }
+
+extern card system_z_grubsza(int cards[4][13], int player);//nie dziala
 
 void show_last_trick(){//ostatnia lewa
 	//
 }
 
+int count;
+
+card wczytanie_licytacja(int number,card deal);
+
+void info_dla_gracza_licytacja(int gracz, card *karty, card deal);
+
 void auction(){
-	//starts from player A
 	printf("\nLICYTACJA \n");
-	int count = 0;//how many times pass
-	int player = 0;//start at N
+	int player = 0;//startujemu od 1
 	int number;
-	char c;
-	int color;
 	while(count < 3){
-		clear_screen;
-		printf("Kolej gracza %i\n", player + 1);
-		printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: (1 - 7) \noraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo 0 jesli pass\n");
-		printf("a to twoje karty :");
-		show_cards(&cards[player][0], 13, player);
-		printf("na ten moment zalicytowane jest:\n");
-		print(deal);
-		printf("\n");
-		printf("jesli chcesz uzyskać podpowiedź do licytacji napisz -1");
-		printf("\n");
+		clear_screen();
+		info_dla_gracza_licytacja(player, &cards[player][0], deal);
 		scanf("%i", &number);
 		if(number == -1){
-			printf("\nTwoja podpowiedz do licytacji w sysyemie 'z grubsza' to:\n");
-			print(system_z_grubsza(player));
+			printf("\nTwoja podpowiedz do licytacji w systemie naturalnym to:\n");
+//			print(system_z_grubsza(player));
+			card proponowana_odzywka = naturalny_otwarcie(&cards[player][0]);
+			if(proponowana_odzywka.num == 0){
+				printf("pass (0)");
+			}
+			else{
+				print(proponowana_odzywka);
+			}
 			printf("\n");
 			printf("Co chcesz zalicytować?\n");
+			scanf("%i", &number);
 		}
-		if(number == 0){
-			count ++;
-			player = (player + 1)%4;
+		card zalicytowane = wczytanie_licytacja(number, deal);
+		if(zalicytowane.num == -1){//pass
+			count++;
 		}
-		else{	
-			if(scanf(" %c", &c) < 1){//if someone enters wrong thing
-				printf("niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
-			}
-//			scanf(" %c", &c);
-			else{
-				count = 0;
-				if(c == 'n' || c == 'N') color = 0;
-				if(c == 'h' || c == 'H') color = 1;
-				if(c == 'd' || c == 'D') color = 2;
-				if(c == 's' || c == 'S') color = 3;
-				if(c == 'c' || c == 'C') color = 4;
-				if(number < deal.num || (number == deal.num && color > deal.color)) printf("to jest mniej niż poprzednio, wiec nie mozna tego zalicytowac \n");
-				else{
-					deal.num = number;
-					deal.color = color;
-					player = (player + 1)%4;
-				}
-			}
+		else{
+			count = 0;
+			deal = zalicytowane;
 		}
+		player = (player + 1)%4;
+//		clear_screen();
 	}
 	if(DEBUG){
 		printf("licytacja zakonczona na ");
@@ -189,6 +138,10 @@ void new_game(){
 	deal.color = 0;
 	generate_cards(&wszystkie_karty[0]);
 	dealing_cards();
+	if(DEBUG){
+		printf("ENTER, żeby kontynuować:\n");
+		getchar();
+	}
 	clear_screen();
 }
 
@@ -200,3 +153,4 @@ int main(){
 	auction();
 	//do licytacji dopisac zapamietywanie ostatnich czterech (czyli dla kazdego z graczy), bo to trzeba pokazywac i przyda sie do z grubsza
 }
+

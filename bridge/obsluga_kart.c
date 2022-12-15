@@ -36,7 +36,7 @@ void sort_by_color(card *tab, int ile){
 	//bubble sort
 	for(int i = 0; i < ile; i ++){
 		for(int j = 1; j < ile - i; j ++){
-			if((tab + j - 1) -> color > (tab + j) -> color || ((tab + j- 1) -> num < (tab + j) -> num && (tab + j - 1) -> color == (tab + j) -> color)){
+			if((tab + j - 1) -> color > (tab + j) -> color || ((tab + j- 1) -> num > (tab + j) -> num && (tab + j - 1) -> color == (tab + j) -> color)){
 				card temp = *(tab + j - 1);
 				*(tab + j - 1) = *(tab + j);
 				*(tab + j) = temp;
@@ -45,7 +45,27 @@ void sort_by_color(card *tab, int ile){
 	}
 }
 
-//srand(time(NULL));
+
+
+int policz_punkty(card *karty){
+	int suma = 0;
+	for(int i = 0; i < 13; i++){
+		if((karty + i) -> num == 14){//ace
+			suma += 4;
+		}
+		if((karty + i) -> num == 13){//krol
+			suma += 3;
+		}
+		if((karty + i) -> num == 12){//dama
+			suma += 2;
+		}
+		if((karty + i) -> num == 11){//walet
+			suma += 1;
+		}
+	}
+	return suma;
+}
+
 
 extern void wyswietl_rozdanie(card *karty);
 
