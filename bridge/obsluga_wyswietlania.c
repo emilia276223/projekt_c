@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <stdbool.h>
+
+#define DEBUG 1
 
 //to pewnie potrzebuje
 struct card{
@@ -12,14 +15,33 @@ struct card{
 typedef struct card card;
 
 char znaczek[][5] = {"BA", "kier", "karo", "pik", "trefl"};
-char wartosc[][13] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+char wartosc[][16] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 
 void print(card karta){
+	if(karta.num < 0 || karta.num > 15 || karta.color < 0 || karta.color > 4){
+		printf("Karta nie pasuje, wartosci to : numer = %i, kolor = %i", karta.num, karta.color);
+		return;
+	}
 	printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
 }
 
 void clear_screen(){//bedzie w wyswietlanie
 	system("clear");
+}
+
+int wczytaj_kolor(char c){
+	int kolor = -1;
+	if(c == 'n' || c == 'N') kolor = 0;
+	if(c == 'h' || c == 'H') kolor = 1;
+	if(c == 'd' || c == 'D') kolor = 2;
+	if(c == 's' || c == 'S') kolor = 3;
+	if(c == 'c' || c == 'C') kolor = 4;
+	if(kolor == -1){
+		printf("\nBłędnie podany kolor, proszę podać jeszcze raz (sam kolor):\n");
+		c = getchar();
+		kolor = wczytaj_kolor(c);
+	}
+	return kolor;
 }
 
 void show_cards(card *karty, int ile, int numer_gracza){
@@ -77,11 +99,7 @@ card wczytanie_licytacja(int number, card deal){
 		scanf("%i", &number);
 		return wczytanie_licytacja(number, deal);
 	}
-	if(c == 'n' || c == 'N') color = 0;
-	if(c == 'h' || c == 'H') color = 1;
-	if(c == 'd' || c == 'D') color = 2;
-	if(c == 's' || c == 'S') color = 3;
-	if(c == 'c' || c == 'C') color = 4;
+	color = wczytaj_kolor(c);
 	if(color == -1){//blad wczytywania
 		printf("niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
 		scanf("%i", &number);
@@ -98,5 +116,73 @@ card wczytanie_licytacja(int number, card deal){
 	return wynik;
 }
 
-//daję zaproszenia na zosię:
-//Bbe
+bool czy_nowa(){
+	clear_screen();
+	printf("gra zakonczona\n");
+	printf("Jeśli chcesz rozpocząć kolejną grę wpisz T, w przeciwnym wypadku wpisz inny znak\n");
+	char z;
+	scanf("%c",&z);
+	return (z == 't' || z == 'T') ? true : false; 
+}
+
+extern bool sprawdz_karte(card *karty,int ile,card wynik,int poprzedni_kolor);
+
+card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n){
+	printf("kolej gracza %i\n", gracz + 1);
+	show_cards(karty, ile, gracz);
+	if(n > 0){
+		printf("Na stole są: \n");
+		for(int i = 0; i < n; i++){
+			print(karty_na_stole[i]);
+		}
+	}
+	else{
+		printf("wistujesz:\n");
+	}
+	printf("\nWybierz, ktorą kartę chcesz zagrać\n");
+	char numer = 0;
+	scanf("%c", &numer);
+	if(numer == '\n'){
+		scanf("%c", &numer);
+	}
+	printf("Wczytano numer %c\n", numer);
+	if(numer == '1') getchar();//zabieram 0
+	char kolor;
+	while(scanf("%c",&kolor) < 1){
+		printf("\nBłąd przy podaniu karty, proszę spróbować jeszcze raz\n");
+	}
+	card wynik;
+	if(numer >= '2' && numer <= '9'){//2 - 9
+		wynik.num = numer - '0';
+	}
+	if(numer == '1'){//10
+		wynik.num = 10;
+	}
+	if(numer == 'J' || numer == 'j'){//10
+		wynik.num = 11;
+	}
+	if(numer == 'Q' || numer == 'q'){//10
+		wynik.num = 12;
+	}
+	if(numer == 'K' || numer == 'k'){//10
+		wynik.num = 13;
+	}
+	if(numer == 'A' || numer == 'a'){//10
+		wynik.num = 14;
+	}
+	wynik.color = wczytaj_kolor(kolor);
+	if(DEBUG){
+		printf("wybrano karte:\n");
+		print(wynik);
+	}
+	int poprzedni_kolor = -1;
+	if(n > 0){
+		poprzedni_kolor = karty_na_stole[0].color;
+	}
+	if(!sprawdz_karte(karty, ile, wynik, poprzedni_kolor)){
+		printf("niepoprawnie wybrano karte (na przyklad nie posiadasz takiej), bedziesz musiał_ podać jeszcze raz\n");
+		return wybor_karty(karty, ile, gracz, karty_na_stole, n);
+	}
+	return wynik;
+}
+

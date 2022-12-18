@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 
 //to pewnie potrzebuje
 struct card{
@@ -95,4 +96,36 @@ void tasowanie(card *talia){//tasuje 52 karty
 //	printf("Rozdanie :");
 //	wyswietl_rozdanie(talia);
 }
+
+bool sprawdz_karte(card *karty,int ile,card wynik,int poprzedni_kolor){
+	//sprawdzam czy ma te karte
+	int znalezione = -1;
+	for(int i = 0; i < ile; i++){
+		if((karty + i) -> num == wynik.num && (karty + i) -> color == wynik.color){//ta karta
+			znalezione = i;
+		}
+	}
+	if(znalezione == -1) return false;
+	if(wynik.color != poprzedni_kolor){//jesli wynik jest w kartach ale ma inny kolor niz pierwsza w lewie
+		bool znalezione_2 = false;
+		for(int i = 0; i < ile; i++){
+			if((karty + i) -> color == poprzedni_kolor){
+				znalezione = true;
+				break;
+			}
+		}
+		//jesli ma karte w kolorze pierwszej a dal inna
+		if(znalezione_2) return false;
+	}
+	
+	//jesli karta poprawna
+	for(int i = znalezione; i < ile; i++){
+		//pzepisuje kolejna karte
+		(karty + i) -> num = (karty + i + 1) -> num;
+		(karty + i) -> color = (karty + i + 1) -> color;
+	}
+	return true;
+}
+
+
 

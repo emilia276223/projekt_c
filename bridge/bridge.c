@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <time.h>
+#include <stdbool.h>
 
-#define DEBUG 0
+#define DEBUG 1
 
 struct card{
 	int num;
@@ -43,6 +43,7 @@ card deal;//first - number (1 - 7), second - color
 //2 - diamonds
 //3 - spades
 //4 - clubs
+
 
 void dealing_cards(){
 	//randomised cards
@@ -89,11 +90,13 @@ card wczytanie_licytacja(int number,card deal);
 
 void info_dla_gracza_licytacja(int gracz, card *karty, card deal);
 
+int rozgrywajacy = 0;
+
 void auction(){
 	printf("\nLICYTACJA \n");
 	int player = 0;//startujemu od 1
 	int number;
-	while(count < 3){
+	while(count < 3 || (count < 4 && deal.num == 0)){
 		clear_screen();
 		info_dla_gracza_licytacja(player, &cards[player][0], deal);
 		scanf("%i", &number);
@@ -118,6 +121,7 @@ void auction(){
 		else{
 			count = 0;
 			deal = zalicytowane;
+			rozgrywajacy = player;
 		}
 		player = (player + 1)%4;
 //		clear_screen();
@@ -129,20 +133,57 @@ void auction(){
 	}
 }
 
-void runda(){
-	//
+extern card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n);
+
+int runda(int dealer, int n){//zwracam kto zebral lewe
+	//n - n-ta runda
+	int player = dealer;
+	card karty_na_stole[4];
+	for(int i = 0; i < 4; i++){
+		if(player == (rozgrywajacy + 2) % 4){//jesli dziadek
+			show_cards(&cards[rozgrywajacy][0], 13 - n, rozgrywajacy);
+			karty_na_stole[i] = wybor_karty(&cards[player][0], 13 - n, player, karty_na_stole, i);
+		}
+		else{
+			karty_na_stole[i] = wybor_karty(&cards[player][0], 13 - n, player, karty_na_stole, i);
+		}
+		player = (player + 1) % 4;
+		clear_screen();
+	}
 }
+
+void gra(){
+	//13 rund
+	//deal -> atut
+	//znam rozgrywajacego
+	//pierwsza runde rozpoczyna rozgrywajacy + 1
+	int dealer = (rozgrywajacy + 1) % 4;
+	for(int i = 0; i < 13; i++){
+		dealer = runda(dealer,i);
+	}
+}
+
+extern bool czy_nowa();
 
 void new_game(){
 	deal.num = 0;
 	deal.color = 0;
 	generate_cards(&wszystkie_karty[0]);
 	dealing_cards();
-	if(DEBUG){
-		printf("ENTER, żeby kontynuować:\n");
-		getchar();
-	}
+//	if(DEBUG){
+//		printf("ENTER, żeby kontynuować:\n");
+//		getchar();
+//	}
 	clear_screen();
+	if(DEBUG == 0) auction();
+	else{
+		deal.num = 1;
+	}
+	if(deal.num == 0){
+		printf("Licytacja zakonczona niepowodzeniem\n\n");
+		return;
+	}
+	gra();
 }
 
 int main(){
@@ -150,7 +191,10 @@ int main(){
 
 //	auction();
 	new_game();
-	auction();
-	//do licytacji dopisac zapamietywanie ostatnich czterech (czyli dla kazdego z graczy), bo to trzeba pokazywac i przyda sie do z grubsza
+//	auction();
+	while(czy_nowa()){
+		new_game();
+	}
+	return 0;
 }
 

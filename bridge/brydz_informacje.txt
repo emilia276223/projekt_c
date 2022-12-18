@@ -21,3 +21,7 @@ a następnie:
 
 ./a.out
 
+PLAN:
+1. historia licytacji
+2. lepsze podpowiedzi do licytacji
+3. gra
