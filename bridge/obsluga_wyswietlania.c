@@ -83,6 +83,8 @@ card wczytanie_licytacja(int number, card deal){
 	card wynik;
 	if(number == 0){//pass
 		wynik.num = -1;
+		wynik.color = -1;
+		zalicytowano(wynik);
 		return wynik;
 	}
 	//jesli niepoprawny numer
@@ -151,7 +153,7 @@ card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n){
 	printf("Wczytano numer %c\n", numer);
 	if(numer == '1') getchar();//zabieram 0
 	char kolor;
-	while(scanf("%c",&kolor) < 1){
+	while(scanf(" %c",&kolor) < 1){
 		printf("\nBłąd przy podaniu karty, proszę spróbować jeszcze raz\n");
 	}
 	card wynik;
@@ -184,7 +186,7 @@ card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n){
 		poprzedni_kolor = karty_na_stole[0].color;
 	}
 	if(!sprawdz_karte(karty, ile, wynik, poprzedni_kolor)){
-		printf("niepoprawnie wybrano karte (na przyklad nie posiadasz takiej), bedziesz musiał_ podać jeszcze raz\n");
+		printf("niepoprawnie wybrano karte (na przyklad nie posiadasz takiej lub kolor jest niepoprawny), bedziesz musiał_ podać jeszcze raz\n");
 		return wybor_karty(karty, ile, gracz, karty_na_stole, n);
 	}
 	return wynik;

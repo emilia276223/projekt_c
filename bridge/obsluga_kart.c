@@ -110,7 +110,7 @@ bool sprawdz_karte(card *karty,int ile,card wynik,int poprzedni_kolor){
 		bool znalezione_2 = false;
 		for(int i = 0; i < ile; i++){
 			if((karty + i) -> color == poprzedni_kolor){
-				znalezione = true;
+				znalezione_2 = true;
 				break;
 			}
 		}
@@ -127,5 +127,36 @@ bool sprawdz_karte(card *karty,int ile,card wynik,int poprzedni_kolor){
 	return true;
 }
 
+int ustal_wygrana(card karty_na_stole[4], int atut){
+	int kolor = karty_na_stole[0].color;
+	int wygrywa = 0;//ma zawsze atutowy lub kolor
+	for(int i = 1; i < 4; i++){
+		if(karty_na_stole[i].num > karty_na_stole[wygrywa].num){
+			if(karty_na_stole[wygrywa].color == kolor && karty_na_stole[i].color == kolor){//jesli w tym samym kolorze
+				wygrywa = i;
+			}
+			else{//jesli maja w innym kolorze
+				if(karty_na_stole[wygrywa].color == kolor && karty_na_stole[i].color == atut){
+					wygrywa = i;
+				}
+				else{//
+					if(karty_na_stole[wygrywa].color == atut && karty_na_stole[i].color == atut){
+						wygrywa = i;
+					}
+					else{
+						//poprzedni ma w atutowym a drugi nie wiec zostaje jak bylo
+					}
+				}
+			}
+		}
+		else{//i nie ma przewagi wysokosci karty
+			if(karty_na_stole[wygrywa].color != atut && karty_na_stole[i].color == atut){//ale ma przewage bo atut
+				wygrywa = i;
+			}
+			//w innym pzypadku zostaje jak bylo
+		}
+	}
+	return wygrywa;
+}
 
 

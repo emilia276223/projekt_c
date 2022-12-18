@@ -4,6 +4,8 @@
 #include <math.h>
 #include <string.h>
 
+#define DEBUG 1
+
 //to pewnie potrzebuje
 struct card{
 	int num;
@@ -12,11 +14,12 @@ struct card{
 typedef struct card card;
 
 card historia_licytacji[200];//maksymalna mozliwa liczba ruchow w licytacji
-int nr_odzywki;//na nr nastepnej
+int nr_odzywki = 0;//na nr nastepnej
 //card deal;
 
 void zalicytowano(card lic){
-	historia_licytacji[nr_odzywki] = lic;
+	historia_licytacji[nr_odzywki].num = lic.num;
+	historia_licytacji[nr_odzywki].color = lic.color;
 	nr_odzywki++;
 }
 
@@ -25,10 +28,16 @@ extern void sort_by_num(card *tab, int ile);
 extern int policz_punkty(card *karty);
 
 int ustaw_rozgrywajacego(int zaczynajacy_licytacje){
+	if(DEBUG){
+		for(int i = 0; i < nr_odzywki; i++){
+			printf("zalicytowano: (%i, %i)\n", historia_licytacji[i].num, historia_licytacji[i].color);
+		}
+	}
 	//odpalam tylko gdy deal jest, czyli jest cos zalicytowane
+	printf("nr_odzywki = %i \n", nr_odzywki);
 	int rozgrywajacy = nr_odzywki - 1;//ostatnia
 	//znajduje ostatnia zalicytowana rzecz (powinna byc 3 od konca ale lepiej sprawdzic)
-	while(historia_licytacji[rozgrywajacy].num == 0){
+	while(historia_licytacji[rozgrywajacy].num == -1){
 		rozgrywajacy--;
 	}
 	//ustalam co jest zalicytowane (kolor)
@@ -43,7 +52,7 @@ int ustaw_rozgrywajacego(int zaczynajacy_licytacje){
 	}
 	//teraz gracz jest ustawiony w dobrym miejscu (moment pierwszego zalicytowania danego koloru)
 	//ustalam ktory to gracz
-	return (gracz - zaczynajacy_licytacje) % 4;
+	return (rozgrywajacy - zaczynajacy_licytacje) % 4;
 }
 
 card naturalny_otwarcie(card *karty){

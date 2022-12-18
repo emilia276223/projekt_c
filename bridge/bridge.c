@@ -92,6 +92,7 @@ void info_dla_gracza_licytacja(int gracz, card *karty, card deal);
 
 int rozgrywajacy = 0;
 int dziadek;
+int atut;
 
 extern int ustaw_rozgrywajacego(int zaczynajacy_licytacje);
 
@@ -120,7 +121,7 @@ void auction(){
 			scanf("%i", &number);
 		}
 		card zalicytowane = wczytanie_licytacja(number, deal);
-		zalicytowano(zalicytowane);
+//		zalicytowano(zalicytowane);
 		if(zalicytowane.num == -1){//pass
 			count++;
 		}
@@ -140,6 +141,8 @@ void auction(){
 }
 
 extern card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n);
+extern int ustal_wygrana(card karty_na_stole[4], int atut);
+
 
 int runda(int dealer, int n){//zwracam kto zebral lewe
 	//n - n-ta runda
@@ -147,7 +150,6 @@ int runda(int dealer, int n){//zwracam kto zebral lewe
 	card karty_na_stole[4];
 	for(int i = 0; i < 4; i++){
 		clear_screen();
-//		clear_screen();
 		if(player == dziadek){//jesli dziadek
 			printf("Karty rozgrywajacego:");
 			show_cards(&cards[rozgrywajacy][0], 13 - n, rozgrywajacy);
@@ -166,6 +168,10 @@ int runda(int dealer, int n){//zwracam kto zebral lewe
 		}
 		player = (player + 1) % 4;
 	}
+	int new_dealer;
+	new_dealer = ustal_wygrana(karty_na_stole, atut);
+	score[new_dealer]++;
+	return new_dealer;
 }
 
 void gra(){
@@ -184,6 +190,10 @@ extern bool czy_nowa();
 void new_game(){
 	deal.num = 0;
 	deal.color = 0;
+	score[0] = 0;
+	score[1] = 0;
+	score[2] = 0;
+	score[3] = 0;
 	generate_cards(&wszystkie_karty[0]);
 	dealing_cards();
 //	if(DEBUG){
@@ -192,7 +202,7 @@ void new_game(){
 //	}
 	clear_screen();
 	auction();
-	clear_screen();
+//	clear_screen();
 //	else{
 //		deal.num = 1;
 //	}
@@ -202,8 +212,11 @@ void new_game(){
 	}
 	rozgrywajacy = ustaw_rozgrywajacego(0);//bo na razie licytacje zawsze rozpoczyna gracz 0
 	dziadek = (rozgrywajacy + 2) % 4;
+	atut = deal.color;
 	clear_screen();
 	gra();
+	//wyswietlenie wynikow
+	printf("Gra zakonczona, wyniki to: %i, %i, %i, %i", score[0], score[1], score[2], score[3]);
 }
 
 int main(){
