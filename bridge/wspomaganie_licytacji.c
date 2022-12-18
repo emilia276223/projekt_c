@@ -27,7 +27,7 @@ extern void sort_by_num(card *tab, int ile);
 
 extern int policz_punkty(card *karty);
 
-int ustaw_rozgrywajacego(int zaczynajacy_licytacje){
+int ustaw_rozgrywajacego(int zaczynajacy_licytacje){//cos nie tak
 	if(DEBUG){
 		for(int i = 0; i < nr_odzywki; i++){
 			printf("zalicytowano: (%i, %i)\n", historia_licytacji[i].num, historia_licytacji[i].color);
@@ -44,7 +44,7 @@ int ustaw_rozgrywajacego(int zaczynajacy_licytacje){
 	int kolor = historia_licytacji[rozgrywajacy].color;
 	//znajduje kto z pary pierwszy go powiedzial
 	int gracz = rozgrywajacy - 2;//bede przechodzic co 2 bo to sa co w tej parze sie zadzialo
-	while(gracz > 0){
+	while(gracz >= 0){
 		if(historia_licytacji[gracz].color == kolor || historia_licytacji[gracz].num > 0){//zalicytowal ten kolor (i to nie byl pass)
 			rozgrywajacy = gracz;
 		}
