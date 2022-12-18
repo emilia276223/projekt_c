@@ -16,4 +16,8 @@ gcc bridge.c obsluga_wyswietlania.c obsluga_kart.c wspomaganie_licytacji.c
 a następnie:
 ./a.out
 
+Druga opcja: odpalenie wersji_w_jednym_pliku w dowolnym programie (UWAGA! wersja jest mniej aktualna)
+
 Gra jest pisana pod poprawne działanie na linuxie, na innych systemach operacyjnych (na przykład Windows) mogą występować pewne błędy.
+
+
