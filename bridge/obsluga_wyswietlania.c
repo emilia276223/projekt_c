@@ -122,6 +122,9 @@ bool czy_nowa(){
 	printf("Jeśli chcesz rozpocząć kolejną grę wpisz T, w przeciwnym wypadku wpisz inny znak\n");
 	char z;
 	scanf("%c",&z);
+	if(z == '\n'){
+		scanf("%c",&z);
+	}
 	return (z == 't' || z == 'T') ? true : false; 
 }
 
@@ -174,9 +177,10 @@ card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n){
 	if(DEBUG){
 		printf("wybrano karte:\n");
 		print(wynik);
+		printf("\n");
 	}
 	int poprzedni_kolor = -1;
-	if(n > 0){
+	if(n > 0){//bylo cos wczesniej dane
 		poprzedni_kolor = karty_na_stole[0].color;
 	}
 	if(!sprawdz_karte(karty, ile, wynik, poprzedni_kolor)){

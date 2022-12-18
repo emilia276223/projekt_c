@@ -91,6 +91,11 @@ card wczytanie_licytacja(int number,card deal);
 void info_dla_gracza_licytacja(int gracz, card *karty, card deal);
 
 int rozgrywajacy = 0;
+int dziadek;
+
+extern int ustaw_rozgrywajacego(int zaczynajacy_licytacje);
+
+extern void zalicytowano(card lic);
 
 void auction(){
 	printf("\nLICYTACJA \n");
@@ -115,13 +120,14 @@ void auction(){
 			scanf("%i", &number);
 		}
 		card zalicytowane = wczytanie_licytacja(number, deal);
+		zalicytowano(zalicytowane);
 		if(zalicytowane.num == -1){//pass
 			count++;
 		}
 		else{
 			count = 0;
 			deal = zalicytowane;
-			rozgrywajacy = player;
+//			rozgrywajacy = player;
 		}
 		player = (player + 1)%4;
 //		clear_screen();
@@ -140,15 +146,25 @@ int runda(int dealer, int n){//zwracam kto zebral lewe
 	int player = dealer;
 	card karty_na_stole[4];
 	for(int i = 0; i < 4; i++){
-		if(player == (rozgrywajacy + 2) % 4){//jesli dziadek
+		clear_screen();
+//		clear_screen();
+		if(player == dziadek){//jesli dziadek
+			printf("Karty rozgrywajacego:");
 			show_cards(&cards[rozgrywajacy][0], 13 - n, rozgrywajacy);
-			karty_na_stole[i] = wybor_karty(&cards[player][0], 13 - n, player, karty_na_stole, i);
+			karty_na_stole[i] = wybor_karty(&cards[dziadek][0], 13 - n, dziadek, karty_na_stole, i);
 		}
 		else{
-			karty_na_stole[i] = wybor_karty(&cards[player][0], 13 - n, player, karty_na_stole, i);
+			if(n == 0 && player == (dziadek - 1) % 4){
+				//gracz nie widzie jeszcze kart dziadka
+				karty_na_stole[i] = wybor_karty(&cards[player][0], 13 - n, player, karty_na_stole, i);
+			}
+			else{
+				printf("Karty dziadka:");
+				show_cards(&cards[dziadek][0], 13 - n, dziadek);
+				karty_na_stole[i] = wybor_karty(&cards[player][0], 13 - n, player, karty_na_stole, i);	
+			}
 		}
 		player = (player + 1) % 4;
-		clear_screen();
 	}
 }
 
@@ -175,14 +191,18 @@ void new_game(){
 //		getchar();
 //	}
 	clear_screen();
-	if(DEBUG == 0) auction();
-	else{
-		deal.num = 1;
-	}
+	auction();
+	clear_screen();
+//	else{
+//		deal.num = 1;
+//	}
 	if(deal.num == 0){
 		printf("Licytacja zakonczona niepowodzeniem\n\n");
 		return;
 	}
+	rozgrywajacy = ustaw_rozgrywajacego(0);//bo na razie licytacje zawsze rozpoczyna gracz 0
+	dziadek = (rozgrywajacy + 2) % 4;
+	clear_screen();
 	gra();
 }
 

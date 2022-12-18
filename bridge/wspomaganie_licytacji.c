@@ -24,6 +24,28 @@ extern void sort_by_num(card *tab, int ile);
 
 extern int policz_punkty(card *karty);
 
+int ustaw_rozgrywajacego(int zaczynajacy_licytacje){
+	//odpalam tylko gdy deal jest, czyli jest cos zalicytowane
+	int rozgrywajacy = nr_odzywki - 1;//ostatnia
+	//znajduje ostatnia zalicytowana rzecz (powinna byc 3 od konca ale lepiej sprawdzic)
+	while(historia_licytacji[rozgrywajacy].num == 0){
+		rozgrywajacy--;
+	}
+	//ustalam co jest zalicytowane (kolor)
+	int kolor = historia_licytacji[rozgrywajacy].color;
+	//znajduje kto z pary pierwszy go powiedzial
+	int gracz = rozgrywajacy - 2;//bede przechodzic co 2 bo to sa co w tej parze sie zadzialo
+	while(gracz > 0){
+		if(historia_licytacji[gracz].color == kolor || historia_licytacji[gracz].num > 0){//zalicytowal ten kolor (i to nie byl pass)
+			rozgrywajacy = gracz;
+		}
+		gracz -= 2;
+	}
+	//teraz gracz jest ustawiony w dobrym miejscu (moment pierwszego zalicytowania danego koloru)
+	//ustalam ktory to gracz
+	return (gracz - zaczynajacy_licytacje) % 4;
+}
+
 card naturalny_otwarcie(card *karty){
 	int liczba_punktow = policz_punkty(karty);
 	printf("liczba punktów to : %i\n",liczba_punktow);
