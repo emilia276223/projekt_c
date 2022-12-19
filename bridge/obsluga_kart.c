@@ -37,7 +37,7 @@ void sort_by_color(card *tab, int ile){
 	//bubble sort
 	for(int i = 0; i < ile; i ++){
 		for(int j = 1; j < ile - i; j ++){
-			if((tab + j - 1) -> color > (tab + j) -> color || ((tab + j- 1) -> num > (tab + j) -> num && (tab + j - 1) -> color == (tab + j) -> color)){
+			if((tab + j - 1) -> color > (tab + j) -> color || ((tab + j- 1) -> num < (tab + j) -> num && (tab + j - 1) -> color == (tab + j) -> color)){
 				card temp = *(tab + j - 1);
 				*(tab + j - 1) = *(tab + j);
 				*(tab + j) = temp;

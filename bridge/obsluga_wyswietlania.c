@@ -15,11 +15,12 @@ struct card{
 typedef struct card card;
 
 char znaczek[][5] = {"BA", "kier", "karo", "pik", "trefl"};
-char wartosc[][16] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+char wartosc[][16] = {"0", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10", "J ", "Q ", "K ", "A "};
 
 void print(card karta){
 	if(karta.num < 0 || karta.num > 15 || karta.color < 0 || karta.color > 4){
 		printf("Karta nie pasuje, wartosci to : numer = %i, kolor = %i", karta.num, karta.color);
+//		printf("      ");
 		return;
 	}
 	printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
@@ -45,12 +46,68 @@ int wczytaj_kolor(char c){
 }
 
 void show_cards(card *karty, int ile, int numer_gracza){
-	printf("\nkarty gracza %i:\n", numer_gracza + 1);
-	for(int i = 0; i < ile; i++){//wpisuje graczowi 0
-//		printf("a");
-		print(*(karty + i));
+	printf("\nKarty gracza %i:\n", numer_gracza + 1);
+	//chce wyswietlic w 4 rzedach
+	card kier[13];
+	card karo[13];
+	card pik[13];
+	card trefl[13];
+	int kie = 0, kar = 0, pi = 0, tref = 0;
+	
+	for(int i = 0; i < ile; i++){
+		kier[i].num = 0;
+		kier[i].color = 0;
+		karo[i].num = 0;
+		karo[i].color = 0;
+		pik[i].num = 0;
+		pik[i].color = 0;
+		trefl[i].num = 0;
+		trefl[i].color = 0;
+	}
+	for(int i = 0; i < ile; i++){
+		if((karty + i) -> color == 1){//kier
+			kier[kie] = *(karty + i);
+			kie++;
+		}
+		if((karty + i) -> color == 2){//karo
+			karo[kar] = *(karty + i);
+			kar++;
+		}
+		if((karty + i) -> color == 3){//pik
+			pik[pi] = *(karty + i);
+			pi++;
+		}
+		if((karty + i) -> color == 4){//trefl
+			trefl[tref] = *(karty + i);
+			tref++;
+		}
+	}
+	int max = kie;
+	if(kar > max) max = kar;
+	if(pi > max) max = pi;
+	if(tref > max) max = tref;
+	for(int i = 0; i < max; i++){
+		if(i < kie) print(kier[i]);
+		else{
+			printf("         ");
+		}
 		printf(" ");
-	printf("\n");
+		if(i < kar) print(karo[i]);
+		else{
+			printf("         ");
+		}
+		printf(" ");
+		if(i < pi) print(pik[i]);
+		else{
+			printf("        ");
+		}
+		printf(" ");
+		if(i < tref) print(trefl[i]);
+//		else{
+//			printf("       ");
+//		}
+		printf("\n");
+//		printf("%i %i %i %i \n ", kier[i], karo[i], pik[i], trefl[i]);
 	}
 	printf("\n");
 }
@@ -69,11 +126,11 @@ void info_dla_gracza_licytacja(int gracz, card *karty, card deal){
 	printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: (1 - 7) \noraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo 0 jesli pass\n");
 	printf("a to twoje karty :");
 	show_cards(karty, 13, gracz);
-	printf("liczba twoich punktow to: %i\n", policz_punkty(karty));
-	printf("na ten moment zalicytowane jest:\n");
+	printf("Liczba twoich punktow to: %i\n", policz_punkty(karty));
+	printf("Na ten moment zalicytowane jest:\n");
 	print(deal);
 	printf("\n");
-	printf("jesli chcesz uzyskać podpowiedź do licytacji napisz -1");
+	printf("Jesli chcesz uzyskać podpowiedź do licytacji napisz -1");
 	printf("\n");
 }
 
@@ -89,7 +146,7 @@ card wczytanie_licytacja(int number, card deal){
 	}
 	//jesli niepoprawny numer
 	if(number < 0 || number > 7){
-		printf("niepoprawnie wpisana liczba, proszę podać jeszcze raz ( 0 - pass lub liczba z zakresu 1 - 7)");
+		printf("Niepoprawnie wpisana liczba, proszę podać jeszcze raz ( 0 - pass lub liczba z zakresu 1 - 7)");
 		scanf("%i", &number);
 		return wczytanie_licytacja(number, deal);
 	}
@@ -97,18 +154,18 @@ card wczytanie_licytacja(int number, card deal){
 	int color = -1;
 	char c;
 	if(scanf(" %c", &c) < 1){//if someone enters wrong thing
-		printf("niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
+		printf("Niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
 		scanf("%i", &number);
 		return wczytanie_licytacja(number, deal);
 	}
 	color = wczytaj_kolor(c);
 	if(color == -1){//blad wczytywania
-		printf("niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
+		printf("Niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
 		scanf("%i", &number);
 		return wczytanie_licytacja(number, deal);
 	}
 	if(number < deal.num || (number == deal.num && color > deal.color)){
-		printf("to jest mniej niż poprzednio, wiec nie mozna tego zalicytowac, sprobuj jeszcze raz: \n");
+		printf("To jest mniej niż poprzednio, wiec nie mozna tego zalicytowac, sprobuj jeszcze raz: \n");
 		scanf("%i", &number);
 		return wczytanie_licytacja(number, deal);
 	}
@@ -120,7 +177,7 @@ card wczytanie_licytacja(int number, card deal){
 
 bool czy_nowa(){
 	clear_screen();
-	printf("gra zakonczona\n");
+	printf("Gra zakonczona\n");
 	printf("Jeśli chcesz rozpocząć kolejną grę wpisz T, w przeciwnym wypadku wpisz inny znak\n");
 	char z;
 	scanf("%c",&z);
@@ -133,7 +190,7 @@ bool czy_nowa(){
 extern bool sprawdz_karte(card *karty,int ile,card wynik,int poprzedni_kolor);
 
 card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n){
-	printf("kolej gracza %i\n", gracz + 1);
+	printf("Kolej gracza %i\n", gracz + 1);
 	show_cards(karty, ile, gracz);
 	if(n > 0){
 		printf("Na stole są: \n");
@@ -142,7 +199,7 @@ card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n){
 		}
 	}
 	else{
-		printf("wistujesz:\n");
+		printf("Wistujesz:\n");
 	}
 	printf("\nWybierz, ktorą kartę chcesz zagrać\n");
 	char numer = 0;
@@ -186,7 +243,7 @@ card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n){
 		poprzedni_kolor = karty_na_stole[0].color;
 	}
 	if(!sprawdz_karte(karty, ile, wynik, poprzedni_kolor)){
-		printf("niepoprawnie wybrano karte (na przyklad nie posiadasz takiej lub kolor jest niepoprawny), bedziesz musiał_ podać jeszcze raz\n");
+		printf("Niepoprawnie wybrano karte (na przyklad nie posiadasz takiej lub kolor jest niepoprawny), bedziesz musiał_ podać jeszcze raz\n");
 		return wybor_karty(karty, ile, gracz, karty_na_stole, n);
 	}
 	return wynik;

@@ -134,13 +134,13 @@ void auction(){
 		//strona przejsciowa
 		clear_screen();
 		getchar();
-		printf("ruch gracza poprzedniego zakończony, kolejny ruch będzie gracza %i\n", player + 1);
-		printf("wcisnij ENTER, żeby rozpoczac ruch gracza %i:\n", player + 1);
+		printf("Ruch gracza poprzedniego zakończony, kolejny ruch będzie gracza %i\n", player + 1);
+		printf("Wcisnij ENTER, żeby rozpoczac ruch gracza %i:\n", player + 1);
 		getchar();
 		clear_screen();
 	}
 	if(DEBUG){
-		printf("licytacja zakonczona na ");
+		printf("Licytacja zakonczona na ");
 		print(deal);
 		printf("\n");
 	}
@@ -175,8 +175,8 @@ int runda(int dealer, int n){//zwracam kto zebral lewe
 		player = (player + 1) % 4;
 		clear_screen();
 		getchar();
-		printf("ruch gracza poprzedniego zakończony, kolejny ruch będzie gracza %i\n", player + 1);
-		printf("wcisnij ENTER, żeby rozpoczac ruch gracza %i:\n", player + 1);
+		printf("Ruch gracza poprzedniego zakończony, kolejny ruch będzie gracza %i\n", player + 1);
+		printf("Wcisnij ENTER, żeby rozpoczac ruch gracza %i:\n", player + 1);
 		getchar();
 	}
 	int new_dealer;

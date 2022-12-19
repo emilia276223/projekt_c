@@ -30,11 +30,11 @@ extern int policz_punkty(card *karty);
 int ustaw_rozgrywajacego(int zaczynajacy_licytacje){//cos nie tak
 	if(DEBUG){
 		for(int i = 0; i < nr_odzywki; i++){
-			printf("zalicytowano: (%i, %i)\n", historia_licytacji[i].num, historia_licytacji[i].color);
+			printf("Zalicytowano: (%i, %i)\n", historia_licytacji[i].num, historia_licytacji[i].color);
 		}
 	}
 	//odpalam tylko gdy deal jest, czyli jest cos zalicytowane
-	printf("nr_odzywki = %i \n", nr_odzywki);
+	printf("Nr_odzywki = %i \n", nr_odzywki);
 	int rozgrywajacy = nr_odzywki - 1;//ostatnia
 	//znajduje ostatnia zalicytowana rzecz (powinna byc 3 od konca ale lepiej sprawdzic)
 	while(historia_licytacji[rozgrywajacy].num == -1){
@@ -57,14 +57,14 @@ int ustaw_rozgrywajacego(int zaczynajacy_licytacje){//cos nie tak
 
 card naturalny_otwarcie(card *karty){
 	int liczba_punktow = policz_punkty(karty);
-	printf("liczba punktów to : %i\n",liczba_punktow);
+	printf("Liczba punktów to : %i\n",liczba_punktow);
 	int kolory[5]={0};
 	card wynik;
 	for(int i = 0; i < 13; i++){
 		kolory[(karty + i) -> color]++;
 	}
 	for(int i = 1; i < 5; i++){
-		printf("jest %i kart w kolorze %i\n",kolory[i],i);
+		printf("Jest %i kart w kolorze %i\n",kolory[i],i);
 	}
 	card maksymalny_kolor;
 	maksymalny_kolor.num = kolory[1];//0 to by bylo dla BA
