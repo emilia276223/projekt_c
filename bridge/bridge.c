@@ -84,8 +84,6 @@ void show_last_trick(){//ostatnia lewa
 	//
 }
 
-int count;
-
 card wczytanie_licytacja(int number,card deal);
 
 void info_dla_gracza_licytacja(int gracz, card *karty, card deal);
@@ -102,20 +100,14 @@ void auction(){
 	printf("\nLICYTACJA \n");
 	int player = 0;//startujemu od 1
 	int number;
+	int count = 0;
 	while(count < 3 || (count < 4 && deal.num == 0)){
 		clear_screen();
 		info_dla_gracza_licytacja(player, &cards[player][0], deal);
 		scanf("%i", &number);
 		if(number == -1){
 			printf("\nTwoja podpowiedz do licytacji w systemie naturalnym to:\n");
-//			print(system_z_grubsza(player));
-			card proponowana_odzywka = naturalny_otwarcie(&cards[player][0]);
-			if(proponowana_odzywka.num == 0){
-				printf("pass (0)");
-			}
-			else{
-				print(proponowana_odzywka);
-			}
+			print(naturalny_otwarcie(&cards[player][0]));
 			printf("\n");
 			printf("Co chcesz zalicytować?\n");
 			scanf("%i", &number);
@@ -139,11 +131,11 @@ void auction(){
 		getchar();
 		clear_screen();
 	}
-	if(DEBUG){
-		printf("Licytacja zakonczona na ");
-		print(deal);
-		printf("\n");
-	}
+//	if(DEBUG){
+//		printf("Licytacja zakonczona na ");
+//		print(deal);
+//		printf("\n");
+//	}
 }
 
 extern card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n);
@@ -198,6 +190,8 @@ void gra(){
 
 extern bool czy_nowa();
 
+void wyczysc_licytacja();
+
 void new_game(){
 	deal.num = 0;
 	deal.color = 0;
@@ -205,6 +199,7 @@ void new_game(){
 	score[1] = 0;
 	score[2] = 0;
 	score[3] = 0;
+	wyczysc_licytacja();
 	generate_cards(&wszystkie_karty[0]);
 	dealing_cards();
 //	if(DEBUG){
@@ -236,7 +231,7 @@ int main(){
 //	auction();
 	new_game();
 //	auction();
-	while(czy_nowa()){
+	while(czy_nowa() == true){
 		new_game();
 	}
 	return 0;

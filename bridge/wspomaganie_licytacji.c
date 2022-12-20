@@ -17,6 +17,10 @@ card historia_licytacji[200];//maksymalna mozliwa liczba ruchow w licytacji
 int nr_odzywki = 0;//na nr nastepnej
 //card deal;
 
+void wyczysc_licytacja(){
+	nr_odzywki = 0;
+}
+
 void zalicytowano(card lic){
 	historia_licytacji[nr_odzywki].num = lic.num;
 	historia_licytacji[nr_odzywki].color = lic.color;
@@ -55,17 +59,30 @@ int ustaw_rozgrywajacego(int zaczynajacy_licytacje){//cos nie tak
 	return (rozgrywajacy - zaczynajacy_licytacje) % 4;
 }
 
+void print(card karta);
+
+void print_4_ostatnie_licytacja(int gracz){
+	//teraz kolej gracza
+	for(int i = 1; i < 4; i++){
+		if(nr_odzywki + i - 4 >= 0){
+			printf("Gracz %i: ",(gracz + i) % 4 + 1);
+			print(historia_licytacji[nr_odzywki + i - 4]);
+			printf("\n");
+		}
+	}
+}
+
 card naturalny_otwarcie(card *karty){
 	int liczba_punktow = policz_punkty(karty);
-	printf("Liczba punktów to : %i\n",liczba_punktow);
+//	printf("Liczba punktów to : %i\n",liczba_punktow);
 	int kolory[5]={0};
 	card wynik;
 	for(int i = 0; i < 13; i++){
 		kolory[(karty + i) -> color]++;
 	}
-	for(int i = 1; i < 5; i++){
-		printf("Jest %i kart w kolorze %i\n",kolory[i],i);
-	}
+//	for(int i = 1; i < 5; i++){
+//		printf("Jest %i kart w kolorze %i\n",kolory[i],i);
+//	}
 	card maksymalny_kolor;
 	maksymalny_kolor.num = kolory[1];//0 to by bylo dla BA
 	maksymalny_kolor.color = 1;
@@ -99,7 +116,7 @@ card naturalny_otwarcie(card *karty){
 		wynik.color = maksymalny_kolor.color;
 		return wynik;
 	}
-	wynik.num = 0;
+	wynik.num = -1;//pass
 	wynik.color = 0;
 	return wynik;
 }

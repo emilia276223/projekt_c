@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 //to pewnie potrzebuje
 struct card{
@@ -14,10 +14,14 @@ struct card{
 };
 typedef struct card card;
 
-char znaczek[][5] = {"BA", "kier", "karo", "pik", "trefl"};
+char znaczek[][5] = {"BA", "pik", "kier", "karo", "trefl"};
 char wartosc[][16] = {"0", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10", "J ", "Q ", "K ", "A "};
 
 void print(card karta){
+	if(karta.num == -1){
+		printf("pass");
+		return;
+	}
 	if(karta.num < 0 || karta.num > 15 || karta.color < 0 || karta.color > 4){
 		printf("Karta nie pasuje, wartosci to : numer = %i, kolor = %i", karta.num, karta.color);
 //		printf("      ");
@@ -27,15 +31,15 @@ void print(card karta){
 }
 
 void clear_screen(){//bedzie w wyswietlanie
-	system("clear");
+	if(DEBUG != 1)system("clear");
 }
 
 int wczytaj_kolor(char c){
 	int kolor = -1;
 	if(c == 'n' || c == 'N') kolor = 0;
-	if(c == 'h' || c == 'H') kolor = 1;
-	if(c == 'd' || c == 'D') kolor = 2;
-	if(c == 's' || c == 'S') kolor = 3;
+	if(c == 'h' || c == 'H') kolor = 2;
+	if(c == 'd' || c == 'D') kolor = 3;
+	if(c == 's' || c == 'S') kolor = 1;
 	if(c == 'c' || c == 'C') kolor = 4;
 	if(kolor == -1){
 		printf("\nBłędnie podany kolor, proszę podać jeszcze raz (sam kolor):\n");
@@ -65,17 +69,17 @@ void show_cards(card *karty, int ile, int numer_gracza){
 		trefl[i].color = 0;
 	}
 	for(int i = 0; i < ile; i++){
-		if((karty + i) -> color == 1){//kier
+		if((karty + i) -> color == 1){//pik
+			pik[pi] = *(karty + i);
+			pi++;
+		}
+		if((karty + i) -> color == 2){//kier
 			kier[kie] = *(karty + i);
 			kie++;
 		}
-		if((karty + i) -> color == 2){//karo
+		if((karty + i) -> color == 3){//karo
 			karo[kar] = *(karty + i);
 			kar++;
-		}
-		if((karty + i) -> color == 3){//pik
-			pik[pi] = *(karty + i);
-			pi++;
 		}
 		if((karty + i) -> color == 4){//trefl
 			trefl[tref] = *(karty + i);
@@ -87,6 +91,11 @@ void show_cards(card *karty, int ile, int numer_gracza){
 	if(pi > max) max = pi;
 	if(tref > max) max = tref;
 	for(int i = 0; i < max; i++){
+		if(i < pi) print(pik[i]);
+		else{
+			printf("        ");
+		}
+		printf(" ");
 		if(i < kie) print(kier[i]);
 		else{
 			printf("         ");
@@ -95,11 +104,6 @@ void show_cards(card *karty, int ile, int numer_gracza){
 		if(i < kar) print(karo[i]);
 		else{
 			printf("         ");
-		}
-		printf(" ");
-		if(i < pi) print(pik[i]);
-		else{
-			printf("        ");
 		}
 		printf(" ");
 		if(i < tref) print(trefl[i]);
@@ -120,6 +124,7 @@ void wyswietl_rozdanie(card *karty){
 }
 
 extern int policz_punkty(card *karty);
+void print_4_ostatnie_licytacja(int gracz);
 
 void info_dla_gracza_licytacja(int gracz, card *karty, card deal){
 	printf("Kolej gracza %i\n", gracz + 1);
@@ -130,6 +135,8 @@ void info_dla_gracza_licytacja(int gracz, card *karty, card deal){
 	printf("Na ten moment zalicytowane jest:\n");
 	print(deal);
 	printf("\n");
+	printf("ostatnio zalicytowano:\n");
+	print_4_ostatnie_licytacja(gracz);
 	printf("Jesli chcesz uzyskać podpowiedź do licytacji napisz -1");
 	printf("\n");
 }
@@ -179,10 +186,12 @@ bool czy_nowa(){
 	clear_screen();
 	printf("Gra zakonczona\n");
 	printf("Jeśli chcesz rozpocząć kolejną grę wpisz T, w przeciwnym wypadku wpisz inny znak\n");
-	char z;
-	scanf("%c",&z);
-	if(z == '\n'){
-		scanf("%c",&z);
+	int z;
+	z = getchar();
+//	scanf("%c",&z);
+	if(z == '\n' || z == ' '){
+//		scanf("%c",&z);
+		z = getchar();
 	}
 	return (z == 't' || z == 'T') ? true : false; 
 }
