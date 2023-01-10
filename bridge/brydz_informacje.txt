@@ -11,13 +11,10 @@ Gra zawiera sprawdzanie czy ruch graczy są możliwe (sprawdza czy gracz posiada
 Gra zawiera system wpomagania licytacji - gdy gracz chce dostać podpowiedź co powinien zalicytować może wybrać odpowiednią opcję. Gra na ten moment zawiera opcję podpowiedzi dla gry w systemie naturalnym, ale tylko dla rozpoczynania licytacji.
 
 Grę należy odpalać w terminalu wpisując:
-gcc bridge.c obsluga_wyswietlania.c obsluga_kart.c wspomaganie_licytacji.c 
+gcc bridge.c 
 
 a następnie:
 ./a.out
 
-Druga opcja: odpalenie wersji_w_jednym_pliku w dowolnym programie (UWAGA! wersja jest mniej aktualna)
-
-Gra jest pisana pod poprawne działanie na linuxie, na innych systemach operacyjnych (na przykład Windows) mogą występować pewne błędy.
 
 
