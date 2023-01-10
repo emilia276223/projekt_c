@@ -32,7 +32,6 @@ card deal;//first - number (1 - 7), second - color
 
 int rozgrywajacy = 0;
 int dziadek;
-int atut;
 
 char znaczek[][5] = {"BA", "pik", "kier", "karo", "trefl"};
 char wartosc[][16] = {"0", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10", "J ", "Q ", "K ", "A "};
@@ -67,9 +66,9 @@ card naturalny_otwarcie(card *karty);
 void dealing_cards();
 card naturalny_odpowiedz(card *karty,int liczba_punktow, card poprzedni);//dokonczyc
 void auction();
-int runda(int dealer, int n);
+int runda(int dealer, int n, int atut);
 void new_game();
-void gra();
+void gra(int atut);
 
 void print(card karta){
 	if(karta.num == -1){
@@ -609,7 +608,7 @@ void auction(){
 	}
 }
 
-int runda(int dealer, int n){//zwracam kto zebral lewe
+int runda(int dealer, int n, int atut){//zwracam kto zebral lewe
 	//n - n-ta runda
 	int player = dealer;
 	card karty_na_stole[4];
@@ -645,6 +644,7 @@ int runda(int dealer, int n){//zwracam kto zebral lewe
 }
 
 void new_game(){
+	//wyczyszczenie danych
 	deal.num = 0;
 	deal.color = 0;
 	score[0] = 0;
@@ -652,29 +652,35 @@ void new_game(){
 	score[2] = 0;
 	score[3] = 0;
 	wyczysc_licytacja();
+	//utworzenie nowych kart
 	generate_cards(&wszystkie_karty[0]);
 	dealing_cards();
+	//nowa licytacja
 	clear_screen();
 	auction();
+	//sprawdzenie czy bedzie rozgrywka
 	if(deal.num == 0){
 		printf("Licytacja zakonczona niepowodzeniem\n\n");
 		return;
 	}
+	//ustawienia poczatkowe rozgrywki
 	rozgrywajacy = ustaw_rozgrywajacego(0);//bo na razie licytacje zawsze rozpoczyna gracz 0
 	dziadek = (rozgrywajacy + 2) % 4;
-	atut = deal.color;
+	int atut = deal.color;
 	clear_screen();
-	gra();
+	//rozpoczecie rozgrywki
+	gra(atut);
 	//wyswietlenie wynikow
 	printf("Gra zakonczona, wyniki to: %i, %i, %i, %i", score[0], score[1], score[2], score[3]);
 	//trzeba zrobic sprawdzenie czy ugrane
 }
 
-
-void gra(){
+void gra(int atut){
+	//ustawienie dealera
 	int dealer = (rozgrywajacy + 1) % 4;
 	for(int i = 0; i < 13; i++){
-		dealer = runda(dealer,i);
+		//dla kazdej rundu rozpoczenie z ustalonym wczesniej dealerem
+		dealer = runda(dealer,i, atut);
 	}
 }
 

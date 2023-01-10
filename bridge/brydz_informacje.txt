@@ -11,10 +11,9 @@ Gra zawiera sprawdzanie czy ruch graczy są możliwe (sprawdza czy gracz posiada
 Gra zawiera system wpomagania licytacji - gdy gracz chce dostać podpowiedź co powinien zalicytować może wybrać odpowiednią opcję. Gra na ten moment zawiera opcję podpowiedzi dla gry w systemie naturalnym, ale tylko dla rozpoczynania licytacji.
 
 Grę należy odpalać w terminalu wpisując:
-gcc bridge.c 
+./gra.sh
 
-a następnie:
-./a.out
-
+Może to nie działać, gdy plik gra.sh nie będzie miał wystarczających uprawnień. Należy to zmienić wpisując:
+chmod 700 gra.sh
 
 
