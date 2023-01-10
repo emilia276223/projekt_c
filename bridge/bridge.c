@@ -4,37 +4,15 @@
 #include <math.h>
 #include <string.h>
 #include <stdbool.h>
+#include "wyswietlanie_i_karty.h"
 
 #define DEBUG 1
-
-struct card{
-	int num;
-	int color;
-};
-typedef struct card card;
-
 
 //it will always be: N is dealer, S is waiting, game starts from 
 card cards[4][13];//[i][j][k] - i-ty gracz, [j] j - ta karta
 int score[4];//score of players
 
 card wszystkie_karty[52];
-
-extern void print(card karta);
-
-extern void clear_screen();
-
-extern void sort_by_num(card *tab, int ile);
-
-extern void sort_by_color(card *tab, int ile);
-
-extern void show_cards(card *karty, int ile, int numer_gracza);
-
-extern void generate_cards(card *wszystkie_karty);
-
-extern void tasowanie(card *talia);
-
-extern void wyswietl_rozdanie(card *karty);
 
 card deal;//first - number (1 - 7), second - color
 //colors:
@@ -61,14 +39,6 @@ void dealing_cards(){
 	wyswietl_rozdanie(&cards[0][0]);
 }
 
-//card historia_licytacji[200];//maksymalna mozliwa liczba ruchow w licytacji
-
-
-extern int policz_punkty(card *karty);
-
-card naturalny_otwarcie(card *karty);
-
-
 card naturalny_odpowiedz(card *karty,int liczba_punktow, card poprzedni){
 	int kolory[5];
 	card wynik;
@@ -78,23 +48,12 @@ card naturalny_odpowiedz(card *karty,int liczba_punktow, card poprzedni){
 	//dokonczyc
 }
 
-extern card system_z_grubsza(int cards[4][13], int player);//nie dziala
-
 void show_last_trick(){//ostatnia lewa
 	//
 }
-
-card wczytanie_licytacja(int number,card deal);
-
-void info_dla_gracza_licytacja(int gracz, card *karty, card deal);
-
 int rozgrywajacy = 0;
 int dziadek;
 int atut;
-
-extern int ustaw_rozgrywajacego(int zaczynajacy_licytacje);
-
-extern void zalicytowano(card lic);
 
 void auction(){
 	printf("\nLICYTACJA \n");
@@ -137,9 +96,6 @@ void auction(){
 //		printf("\n");
 //	}
 }
-
-extern card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n);
-extern int ustal_wygrana(card karty_na_stole[4], int atut);
 
 
 int runda(int dealer, int n){//zwracam kto zebral lewe
@@ -188,10 +144,6 @@ void gra(){
 	}
 }
 
-extern bool czy_nowa();
-
-void wyczysc_licytacja();
-
 void new_game(){
 	deal.num = 0;
 	deal.color = 0;
@@ -202,16 +154,8 @@ void new_game(){
 	wyczysc_licytacja();
 	generate_cards(&wszystkie_karty[0]);
 	dealing_cards();
-//	if(DEBUG){
-//		printf("ENTER, żeby kontynuować:\n");
-//		getchar();
-//	}
 	clear_screen();
 	auction();
-//	clear_screen();
-//	else{
-//		deal.num = 1;
-//	}
 	if(deal.num == 0){
 		printf("Licytacja zakonczona niepowodzeniem\n\n");
 		return;
@@ -223,6 +167,7 @@ void new_game(){
 	gra();
 	//wyswietlenie wynikow
 	printf("Gra zakonczona, wyniki to: %i, %i, %i, %i", score[0], score[1], score[2], score[3]);
+	//trzeba zrobic sprawdzenie czy ugrane
 }
 
 int main(){
