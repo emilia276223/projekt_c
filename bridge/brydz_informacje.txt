@@ -1,14 +1,7 @@
 informacje o grze
 
-Gra jest przewidziana dla 4 graczy, dobranych w 2 pary.
-Grają ze sobą gracz 1 z 3 i gracz 2 z 4. 
-
 zasady gry:
 https://pl.wikipedia.org/wiki/Bryd%C5%BC#CITEREFSeifert1996
-
-Gra zawiera sprawdzanie czy ruch graczy są możliwe (sprawdza czy gracz posiada wpisywaną kartę i czy możliwe jest jej położenie według zadsad gry).
-
-Gra zawiera system wpomagania licytacji - gdy gracz chce dostać podpowiedź co powinien zalicytować może wybrać odpowiednią opcję. Gra na ten moment zawiera opcję podpowiedzi dla gry w systemie naturalnym, ale tylko dla rozpoczynania licytacji.
 
 Grę należy odpalać w terminalu wpisując:
 ./gra.sh
