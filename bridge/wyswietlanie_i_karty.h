@@ -21,7 +21,7 @@ card wszystkie_karty[52];
 
 int score[4];//score of players
 
-card deal;//first - number (1 - 7), second - color
+//card deal;//first - number (1 - 7), second - color
 //colors:
 //0 - no trump
 //1 - hearts
@@ -37,38 +37,51 @@ char znaczek[][5] = {"BA", "pik", "kier", "karo", "trefl"};
 char wartosc[][16] = {"0", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10", "J ", "Q ", "K ", "A "};
 
 card historia_licytacji[200];//maksymalna mozliwa liczba ruchow w licytacji
+//pass == -1
 int nr_odzywki = 0;//na nr nastepnej
 
 //zadeklarowanie funkcji
+
+//komunikacja z urzytkownikiem
 void print(card karta);
 void clear_screen();
 int wczytaj_kolor(char c);
 void show_cards(card *karty, int ile, int numer_gracza);
 void wyswietl_rozdanie(card *karty);
+void info_dla_gracza_licytacja(int gracz, card *karty, card deal);
+
+//potrzebne tylko dla licytacji
 int policz_punkty(card *karty);
 void print_4_ostatnie_licytacja(int gracz);
-void info_dla_gracza_licytacja(int gracz, card *karty, card deal);
 void zalicytowano(card lic);
 card wczytanie_licytacja(int number, card deal);
-bool czy_nowa();
 bool sprawdz_karte(card *karty,int ile,card wynik,int poprzedni_kolor);
-card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n);
-void generate_cards(card *wszystkie_karty);
+void naturalny_odpowiedz(card *karty);
+void naturalny_otwarcie(card *karty);
+card licytacja();
+void wyczysc_licytacja();
+
+//obsluga kolejnosci gry
+bool czy_nowa();
+int runda(int dealer, int n, int atut, int *score);
+void gra(int atut, int *score);
+void new_game();
+int ustaw_rozgrywajacego(int zaczynajacy_licytacje);
+
+//ustawianie kart itp
+void tasowanie(card *talia);
+void dealing_cards();
 void sort_by_num(card *tab, int ile);
 void sort_by_color(card *tab, int ile);
-int policz_punkty(card *karty);
-void tasowanie(card *talia);
+void generate_cards(card *wszystkie_karty);
+
+//tylko do rogzrywki
+void ustal_wygrana_test();
 bool sprawdz_karte(card *karty,int ile,card wynik,int poprzedni_kolor);
+card wybor_karty(card *karty, int ile, int gracz, card karty_na_stole[], int n);
+
+//inne
 int ustal_wygrana(card karty_na_stole[4], int atut);
-void wyczysc_licytacja();
-int ustaw_rozgrywajacego(int zaczynajacy_licytacje);
-card naturalny_otwarcie(card *karty);
-void dealing_cards();
-card naturalny_odpowiedz(card *karty,int liczba_punktow, card poprzedni);//dokonczyc
-void auction();
-int runda(int dealer, int n, int atut);
-void new_game();
-void gra(int atut);
 
 void print(card karta){
 	if(karta.num == -1){
@@ -418,6 +431,20 @@ bool sprawdz_karte(card *karty,int ile,card wynik,int poprzedni_kolor){
 	return true;
 }
 
+void ustal_wygrana_test(){
+	printf("Wpisz 4 karty");
+	card karty[4];
+	char kolor;
+	for(int i = 0; i < 4; i++){
+		scanf("%i %c", &karty[i].num, &kolor);
+		karty[i].color = wczytaj_kolor(kolor);
+	}
+	printf("Podaj atut");
+	scanf("%c", &kolor);
+	int atut = wczytaj_kolor(kolor);
+	printf(" wygral: %i",ustal_wygrana(karty, atut));
+}
+
 int ustal_wygrana(card karty_na_stole[4], int atut){
 	int kolor = karty_na_stole[0].color;
 	int wygrywa = 0;//ma zawsze atutowy lub kolor
@@ -497,7 +524,7 @@ void print_4_ostatnie_licytacja(int gracz){
 	}
 }
 
-card naturalny_otwarcie(card *karty){
+void naturalny_otwarcie(card *karty){
 	int liczba_punktow = policz_punkty(karty);
 //	printf("Liczba punktów to : %i\n",liczba_punktow);
 	int kolory[5]={0};
@@ -520,30 +547,37 @@ card naturalny_otwarcie(card *karty){
 	if(liczba_punktow <= 17 && liczba_punktow >= 12 && maksymalny_kolor.num >=5){
 		wynik.num = 1;
 		wynik.color = maksymalny_kolor.color;
-		return wynik;
+		print(wynik);
+		return;
 	}
 	if(liczba_punktow <= 17 && liczba_punktow >= 12){//gdy zrownowazony rozklad
 		wynik.num = 1;
 		wynik.color = 4;
-		return wynik;
+		print(wynik);
+		return;
 	}
 	if(liczba_punktow >= 18 && maksymalny_kolor.num >=5){
 		wynik.num = 2;
 		wynik.color = maksymalny_kolor.color;
-		return wynik;
+		print(wynik);
+		return;
 	}
 	if(liczba_punktow >= 18){
 		wynik.num = 2;
 		wynik.color = 0;
+		print(wynik);
+		return;
 	}
 	if(maksymalny_kolor.num >= 7){
 		wynik.num = 3;
 		wynik.color = maksymalny_kolor.color;
-		return wynik;
+		print(wynik);
+		return;
 	}
 	wynik.num = -1;//pass
 	wynik.color = 0;
-	return wynik;
+	print(wynik);
+	return;
 }
 
 void dealing_cards(){
@@ -562,16 +596,81 @@ void dealing_cards(){
 	wyswietl_rozdanie(&cards[0][0]);
 }
 
-card naturalny_odpowiedz(card *karty,int liczba_punktow, card poprzedni){
-	int kolory[5];
-	card wynik;
-	for(int i = 0; i < 13; i++){
-		kolory[(karty + i) -> color]++;
+void naturalny_odpowiedz(card *karty){
+	//policzenie punktow partnera (na podstawie pierwszej odzywki, najmniejsze mozliwe)
+	int pierwsza_p = (nr_odzywki - 2) % 4;
+	int punkty_p;
+	if(historia_licytacji[pierwsza_p].num == 1){
+		if(historia_licytacji[pierwsza_p].color != 0){//1 w kolor
+			punkty_p = 12;
+		}
+		else{
+			punkty_p = 15;
+		}
 	}
-	//dokonczyc
+	if(historia_licytacji[pierwsza_p].num == -1){//jesli pas
+		punkty_p = 0;
+	}
+	if(historia_licytacji[pierwsza_p].num == 2){//jesli 2
+		punkty_p = 12;
+	}
+	if(historia_licytacji[pierwsza_p].num == 3){
+		if(historia_licytacji[pierwsza_p].color != 0){//3 w kolor
+			punkty_p = 7;
+		}
+		else{
+			punkty_p = 26;
+		}
+	}
+	printf("punkty partnera to co najmniej %i punktow\n", punkty_p);
+	//policzenie sumy punktow
+	int suma_punktow;
+	suma_punktow = punkty_p + policz_punkty(karty);
+	printf("zatem razem macie co najmniej %i punktow\n", suma_punktow);
+	//okreslenie wysokosci docelowej na podstawie ilosci punktow
+	int max_zagranie;
+	if(suma_punktow < 22){//nie warto grac
+		max_zagranie = 0;
+	}
+	if(suma_punktow >= 22 && suma_punktow < 24){//max 1
+		max_zagranie = 1;
+	}
+	if(suma_punktow >= 24 && suma_punktow < 26){//max 2
+		max_zagranie = 2;
+	}
+	if(suma_punktow >= 24 && suma_punktow < 26){//max 3
+		max_zagranie = 3;
+	}
+	//podpowiedz
+	if(suma_punktow >= 26){//warto grac 4 lub wiecej
+		max_zagranie = 4;
+	}
+	if(max_zagranie == 0){
+		printf("Z licytacji i Twoich kart wynika, że nie warto grać");
+		return;
+	}
+	if(max_zagranie < 4){
+		printf("Z licytacji i Twoich kart wynika, że możecie zagrać na wysokości %i.\n", max_zagranie);
+		return;
+	}
+	printf("Z licytacji i Twoich kart wynika, że możecie zagrać na wysokości 4 lub więcej\n");
 }
 
-void auction(){
+void podpowiedz_naturalny(card *karty){
+	//ostatnia w historii licytacji to odzywka poprzedniego gracza
+	if(nr_odzywki <= 1){//nie bylo jeszcze zadnej informacji od gracza z pary
+		naturalny_otwarcie(karty);
+	}
+	else{
+//		printf("na razie nie ma tej opcji\n");
+		naturalny_odpowiedz(karty);
+	}
+}
+
+card licytacja(){
+	card deal;
+	deal.num = 0;
+	deal.color = 0;
 	printf("\nLICYTACJA \n");
 	int player = 0;//startujemu od 1
 	int number;
@@ -582,9 +681,8 @@ void auction(){
 		scanf("%i", &number);
 		if(number == -1){
 			printf("\nTwoja podpowiedz do licytacji w systemie naturalnym to:\n");
-			print(naturalny_otwarcie(&cards[player][0]));
-			printf("\n");
-			printf("Co chcesz zalicytować?\n");
+			podpowiedz_naturalny(&cards[player][0]);
+			printf("\nCo chcesz zalicytować?\n");
 			scanf("%i", &number);
 		}
 		card zalicytowane = wczytanie_licytacja(number, deal);
@@ -606,9 +704,10 @@ void auction(){
 		getchar();
 		clear_screen();
 	}
+	return deal;
 }
 
-int runda(int dealer, int n, int atut){//zwracam kto zebral lewe
+int runda(int dealer, int n, int atut, int *score){//zwracam kto zebral lewe
 	//n - n-ta runda
 	int player = dealer;
 	card karty_na_stole[4];
@@ -638,26 +737,21 @@ int runda(int dealer, int n, int atut){//zwracam kto zebral lewe
 		getchar();
 	}
 	int new_dealer;
-	new_dealer = ustal_wygrana(karty_na_stole, atut);
-	score[new_dealer]++;
+	new_dealer = (dealer + ustal_wygrana(karty_na_stole, atut))%4;
+	*(score + new_dealer) += 1;
 	return new_dealer;
 }
 
 void new_game(){
 	//wyczyszczenie danych
-	deal.num = 0;
-	deal.color = 0;
-	score[0] = 0;
-	score[1] = 0;
-	score[2] = 0;
-	score[3] = 0;
+	int score[4] = {0};
 	wyczysc_licytacja();
 	//utworzenie nowych kart
 	generate_cards(&wszystkie_karty[0]);
 	dealing_cards();
 	//nowa licytacja
 	clear_screen();
-	auction();
+	card deal = licytacja();
 	//sprawdzenie czy bedzie rozgrywka
 	if(deal.num == 0){
 		printf("Licytacja zakonczona niepowodzeniem\n\n");
@@ -669,18 +763,18 @@ void new_game(){
 	int atut = deal.color;
 	clear_screen();
 	//rozpoczecie rozgrywki
-	gra(atut);
+	gra(atut, &score[0]);
 	//wyswietlenie wynikow
 	printf("Gra zakonczona, wyniki to: %i, %i, %i, %i", score[0], score[1], score[2], score[3]);
 	//trzeba zrobic sprawdzenie czy ugrane
 }
 
-void gra(int atut){
+void gra(int atut, int *score){
 	//ustawienie dealera
 	int dealer = (rozgrywajacy + 1) % 4;
 	for(int i = 0; i < 13; i++){
 		//dla kazdej rundu rozpoczenie z ustalonym wczesniej dealerem
-		dealer = runda(dealer,i, atut);
+		dealer = runda(dealer,i, atut, score);
 	}
 }
 

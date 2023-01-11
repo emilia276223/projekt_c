@@ -5,10 +5,10 @@ int main(){
 	
 	new_game();
 	
-	while(czy_nowa() == true){
+	while(czy_nowa()){
 		new_game();
 	}
-	
+//	ustal_wygrana_test();
 	return 0;
 }
 
