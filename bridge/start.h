@@ -13,6 +13,7 @@ void dealing_cards();//rozlozenie kart na 4 graczy
 void sort_by_num(card *tab, int ile);//posortowanie po wielkosci kart
 void sort_by_color(card *tab, int ile);//posortowanie po kolorach
 void generate_cards(card *all_cards);//wygenerowanie talii
+void show_deal(card *karty); // tylko do debugowania
 
 
 void game(int atut, int *score, int tryb_gry)
@@ -175,7 +176,6 @@ void new_game()
 	auction_clear();
 	
 	//utworzenie nowych kart
-	generate_cards(&all_cards[0]);
 	dealing_cards();
 	clear_screen();
 	
@@ -279,7 +279,9 @@ void shuffling(card *talia){//tasuje 52 karty
 
 void dealing_cards()
 {
-	//randomised cards
+	//create and shuffle cards
+	card all_cards[52];
+	generate_cards(&all_cards[0]);
 	shuffling(&all_cards[0]);
 	
 	//podzielenie na graczy
@@ -292,5 +294,13 @@ void dealing_cards()
 	sort_by_color(&cards[1][0], 13);
 	sort_by_color(&cards[2][0], 13);
 	sort_by_color(&cards[3][0], 13);
+}
+
+void show_deal(card *karty)//tylko przy debugowaniu
+{
+	show_cards(karty, 13, 0);
+	show_cards(karty + 13, 13, 1);
+	show_cards(karty + 26, 13, 2);
+	show_cards(karty + 39, 13, 3);
 }
 

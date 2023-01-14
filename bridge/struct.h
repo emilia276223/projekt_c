@@ -16,10 +16,6 @@ typedef struct card card;
 
 
 //it will always be: N is dealer, S is waiting, game starts from 
-card cards[4][13];//[i][j][k] - i-ty gracz, [j] j - ta karta
-card all_cards[52];
-
-int score[4];//score of players
 
 //card deal;//first - number (1 - 7), second - color
 //colors:
@@ -29,21 +25,15 @@ int score[4];//score of players
 //3 - spades
 //4 - clubs
 
-
-
 //tylko dla print
 char znaczek[][5] = {"BA", "pik", "kier", "karo", "trefl"};
 char wartosc[][16] = {"0", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10", "J ", "Q ", "K ", "A "};
-
-
-
 
 //potrzebne wszedzie:
 void print(card karta);
 void clear_screen();
 int input_color(char c);
 void show_cards(card *karty, int ile, int numer_gracza);
-void show_deal(card *karty); // tylko do debugowania
 
 
 void print(card karta){
@@ -141,10 +131,4 @@ void show_cards(card *karty, int ile, int numer_gracza){
 	printf("\n");
 }
 
-void show_deal(card *karty)//tylko przy debugowaniu
-{
-	show_cards(karty, 13, 0);
-	show_cards(karty + 13, 13, 1);
-	show_cards(karty + 26, 13, 2);
-	show_cards(karty + 39, 13, 3);
-}
+

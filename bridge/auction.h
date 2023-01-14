@@ -8,6 +8,9 @@ card auction_history[200];//maksymalna mozliwa liczba ruchow w licytacji
 //pass == -1
 int nr_odzywki = 0;//na nr nastepnej
 
+//potrzebne teraz i pozniej:
+card cards[4][13];//[i][j][k] - i-ty gracz, [j] j - ta karta
+
 
 //potrzebne tylko dla licytacji
 int count_points(card *karty);//policz punkty w danych kartach
