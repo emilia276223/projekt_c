@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define DEBUG 1
+#define DEBUG 0
 //to pewnie potrzebuje
 struct card{
 	int num;

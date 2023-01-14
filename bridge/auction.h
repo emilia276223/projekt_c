@@ -113,6 +113,30 @@ int ustaw_rozgrywajacego(int zaczynajacy_licytacje){//cos nie tak
 	return (rozgrywajacy - zaczynajacy_licytacje) % 4;
 }
 
+int policz_kolory(card *karty, int *kolory)//wpisuje ile z kazdego koloru oraz zwraca maksymalny
+{
+	//policzenie ilosci kart w kazdym z kolorow
+	for(int i = 0; i < 13; i++)
+	{
+		*(kolory + (karty + i) -> color) += 1;
+	}
+
+	//znalezienie najdluzszego koloru
+	int maksymalny_kolor_suma;
+	int maksymalny_kolor = 1;
+	maksymalny_kolor_suma = *(kolory + 1);//0 to by bylo dla BA
+	for(int i = 2; i < 5; i++){
+		if(maksymalny_kolor_suma < *(kolory + i))
+		{
+			maksymalny_kolor = i;
+			maksymalny_kolor_suma = *(kolory + i);
+		}
+	}
+	
+	if(DEBUG) printf("maksymalny kolor w kartach to %i\n", maksymalny_kolor);
+	return maksymalny_kolor;
+}
+
 card naturalny_otwarcie(card *karty, card deal)
 {
 	//policzenie liczby punktow
@@ -120,42 +144,30 @@ card naturalny_otwarcie(card *karty, card deal)
 	
 	//policzenie ilosci kart w kolorach
 	int kolory[5]={0};
-	card wynik;
-	for(int i = 0; i < 13; i++){
-		kolory[(karty + i) -> color]++;
-	}
+	int maksymalny_kolor = policz_kolory(karty, &kolory[0]);
 	
-	//znalezienie najdluzszego koloru
-	card maksymalny_kolor;
-	maksymalny_kolor.num = kolory[1];//0 to by bylo dla BA
-	maksymalny_kolor.color = 1;
-	for(int i = 2; i < 5; i++){
-		if(maksymalny_kolor.num < kolory[i]){
-			maksymalny_kolor.num = kolory[i];
-			maksymalny_kolor.color = i;
-		}
-	}
+	card wynik;
 	
 	//sprawdzenie poprawnej odpowiedzi
-	if(liczba_punktow <= 17 && liczba_punktow >= 12 && maksymalny_kolor.num >=5){
+	if(liczba_punktow <= 17 && liczba_punktow >= 12 && kolory[maksymalny_kolor] >=5){
 		wynik.num = 1;
-		wynik.color = maksymalny_kolor.color;
+		wynik.color = maksymalny_kolor;
 	}
 	else if(liczba_punktow <= 17 && liczba_punktow >= 12){//gdy zrownowazony rozklad
 		wynik.num = 1;
 		wynik.color = 4;
 	}
-	else if(liczba_punktow >= 18 && maksymalny_kolor.num >=5){
+	else if(liczba_punktow >= 18 && kolory[maksymalny_kolor] >=5){
 		wynik.num = 2;
-		wynik.color = maksymalny_kolor.color;
+		wynik.color = maksymalny_kolor;
 	}
 	else if(liczba_punktow >= 18){
 		wynik.num = 2;
 		wynik.color = 0;
 	}
-	else if(maksymalny_kolor.num >= 7){
+	else if(kolory[maksymalny_kolor] >= 7){
 		wynik.num = 3;
-		wynik.color = maksymalny_kolor.color;
+		wynik.color = maksymalny_kolor;
 	}
 	else{
 		wynik.num = -1;//pass
@@ -173,14 +185,47 @@ card naturalny_otwarcie(card *karty, card deal)
 
 int naturalny_odpowiedz_kolor(card *karty)
 {
-	//sprawdzenie, w jaki kolor zalicytowal partner i ile ma w tym kolorze
-	
-	//podliczenie sumy w tym kolorze
-	
-	//podliczenie ile kart w max kolorze (jesli inny) - liczymy ze partner ma 2 (lub 3 jesli BA lub 1c)
-	
+	//policzenie najdluzszego koloru i ile jest kart w pozostalych
+	int kolory[5];
+	int najdluzszy_kolor = policz_kolory(karty, &kolory[0]);
+
+	//pierwsza odzywka partnera (juz byla skoro odpowiadamy)
+	int pierwsza_odzywka = (nr_odzywki - 2) % 4;
+
+	//jesli parten pasowal w pierwszej jego odzywce lub gral BA to podaje moj najlepszy
+	if(auction_history[pierwsza_odzywka].num == -1 || auction_history[pierwsza_odzywka].color == 0)
+	{
+		//podaje moj najlepszy kolor
+		return najdluzszy_kolor;
+	}
+
+	//sprawdzenie, w jaki kolor zalicytowal partner i jaka jest suma moich i jego w tym kolorze
+	int kolor_partnera = auction_history[pierwsza_odzywka].color;
+
+	//jesli ten sam co moj najwyzszy to taki licytuje
+	if(kolor_partnera == najdluzszy_kolor) return najdluzszy_kolor;
+
+	//jesli rozne
+	int zagranie_partnera = auction_history[pierwsza_odzywka].num;//wysokosc na jakiej zalicytowal
+	int suma_w_kolorze_partnera = 0;
+	suma_w_kolorze_partnera += kolory[kolor_partnera];
+	if(zagranie_partnera == 1 || zagranie_partnera == 2)
+	{
+		//jesli gral 1 lub 2 to ma co najmniej 5 w kolorze
+		suma_w_kolorze_partnera += 5;
+	}
+	else if(zagranie_partnera == 3)
+	{
+		//jesli gral 3 to wg syst naturalnego ma co najmniej 7
+		suma_w_kolorze_partnera += 7;
+	}
+
+	//podliczenie ile kart w max kolorze (jesli inny) - liczymy ze partner ma 2
+	kolory[najdluzszy_kolor] += 2;
+
 	//zwrocenie tego, w ktorym jest wiecej
-	return 0;
+	if(suma_w_kolorze_partnera > kolory[najdluzszy_kolor]) return kolor_partnera;
+	else return najdluzszy_kolor;
 }
 
 void naturalny_odpowiedz_bot(card *karty, int *punkty_p, int *suma_p, int *max_z)

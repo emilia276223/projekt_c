@@ -230,7 +230,7 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 		int x = rand() % (ostatnia - pierwsza + 1);
 		x += pierwsza;
 		
-		printf("x = %i \n", x);
+		if(DEBUG) printf("x = %i \n", x);
 		//sprawdzenie czy karta istnieje
 		if(DEBUG && (x < 0 || x >= ile))
 		{
@@ -253,10 +253,10 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 	int ostatnia_a;//wiem ile ich jest
 	for(int i = 0; i < ile; i++)
 	{
-		if((karty + i) -> color == poprzedni_kolor)
+		if((karty + i) -> color == atut)
 		{
 			czy_ma_atut = true;
-			if(pierwsza_a == -1) pierwsza = i;
+			if(pierwsza_a == -1) pierwsza_a = i;
 			ostatnia_a = i;
 		}
 	}
@@ -270,6 +270,7 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 	
 	if(czy_ma_atut)//jesli ma atut to ktoras z nich wybieram
 	{
+		if(DEBUG) printf("pierwsza = %i, ostatnia = %i\n", pierwsza_a, ostatnia_a);
 		int x = rand() % (ostatnia_a - pierwsza_a + 1);
 		x += pierwsza_a;
 		
@@ -283,6 +284,7 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 		}
 		
 		wynik = *(karty + x);
+		remove_card(karty, x);
 		return wynik;
 	}
 	
