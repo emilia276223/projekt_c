@@ -1,4 +1,4 @@
-#include "wyswietlanie_i_karty.h"
+#include "start.h"
 
 int main(){
 	srand(time(NULL));
@@ -10,6 +10,4 @@ int main(){
 	}
 	return 0;
 }
-//dorobic:
 
-//opcja gry z 3 komputerami (moga byc losowe ruchy) 
