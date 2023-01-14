@@ -5,10 +5,11 @@ int main(){
 	
 	new_game();
 	
-	while(czy_nowa()){
+	while(if_new_game()){
 		new_game();
 	}
-//	ustal_wygrana_test();
 	return 0;
 }
+//dorobic:
 
+//opcja gry z 3 komputerami (moga byc losowe ruchy) 
