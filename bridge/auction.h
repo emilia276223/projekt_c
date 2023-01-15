@@ -471,19 +471,28 @@ card auction_user_input(int number, card deal){
 		return auction_user_input(number, deal);
 	}
 	//nie pass
-	int color = -1;
-	char c;
-	if(scanf(" %c", &c) < 1){//if someone enters wrong thing
-		printf("Niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
-		scanf("%i", &number);
-		return auction_user_input(number, deal);
+	// int color = -1;
+	// char c;
+	// if(scanf(" %c", &c) < 1){//if someone enters wrong thing
+	// 	printf("Niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
+	// 	scanf("%i", &number);
+	// 	return auction_user_input(number, deal);
+	// }
+	// color = input_color(c);
+	// if(color == -1){//blad wczytywania
+	// 	printf("Niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
+	// 	scanf("%i", &number);
+	// 	return auction_user_input(number, deal);
+	// }
+
+	//wczytanie koloru:
+	int color = input_color_string();
+	while(color == -256)
+	{
+		printf("Niepoprawnie wpisany kolor, proszę wpisać jeszcze raz:\n");
+		color = input_color_string();
 	}
-	color = input_color(c);
-	if(color == -1){//blad wczytywania
-		printf("Niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
-		scanf("%i", &number);
-		return auction_user_input(number, deal);
-	}
+
 	if(number < deal.num || (number == deal.num && color > deal.color)){
 		printf("To jest mniej niż poprzednio, wiec nie mozna tego zalicytowac, sprobuj jeszcze raz: \n");
 		scanf("%i", &number);

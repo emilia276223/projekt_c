@@ -67,12 +67,20 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 		}
 	}
 	
-	printf("Wczytano numer %c\n", numer);
+	if(DEBUG) printf("Wczytano numer %c\n", numer);
 	if(numer == '1') getchar();//zabieram 0
-	char kolor;
-	while(scanf(" %c",&kolor) < 1){
-		printf("\nBłąd przy podaniu karty, proszę spróbować jeszcze raz\n");
+
+	//wczytanie koloru
+	int color = input_color_string();
+	while(color == -256 || color == 0)
+	{
+		printf("Niepoprawnie wpisano kolor, proszę wpisać jeszcze raz:");
+		color = input_color_string();
 	}
+	// char kolor;
+	// while(scanf(" %c",&kolor) < 1){
+		// printf("\nBłąd przy podaniu karty, proszę spróbować jeszcze raz\n");
+	// }
 	card wynik;
 	if(numer >= '2' && numer <= '9'){//2 - 9
 		wynik.num = numer - '0';
@@ -92,8 +100,8 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 	if(numer == 'A' || numer == 'a'){//10
 		wynik.num = 14;
 	}
-	wynik.color = input_color(kolor);
-	
+	// wynik.color = input_color(kolor);
+	wynik.color = color;
 	//wyswietlenie wyboru
 	printf("wybrano karte:\n");
 	print(wynik);
@@ -150,7 +158,7 @@ bool check_card(card *karty,int ile,card wynik,int poprzedni_kolor){
 }
 
 void find_winner_test(){
-	printf("Wpisz 4 karty");
+	printf("Wpisz 4 karty, kolory podawaj jako n, h, d, s lub c");
 	card karty[4];
 	char kolor;
 	for(int i = 0; i < 4; i++){

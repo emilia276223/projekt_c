@@ -42,7 +42,8 @@ void print_color(int k)
 	printf(" %s ", znaczek[k]);
 }
 
-void print(card karta){
+void print(card karta)
+{
 	if(karta.num == -1){
 		printf("pass");
 		return;
@@ -54,12 +55,40 @@ void print(card karta){
 	printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
 }
 
-void clear_screen(){//bedzie w wyswietlanie
+void clear_screen()
+{//bedzie w wyswietlanie
 	if(DEBUG) printf("\n\n\n\n\n\n\n");
 	else system("clear");
 }
 
-int input_color(char c){
+int input_color_string()
+{
+	char color[] = "     ";
+	scanf("%s", &color[0]);
+	if(DEBUG)printf("Wczytano: <%s>", color);
+
+	if(color[0] == 't' || color[0] == 'T') return 4;
+	if(color[0] == 'b' || color[0] == 'B') return 0;
+	if(color[0] == 'p' || color[0] == 'P') return 1;
+	if(color[0] == 'k' || color[0] == 'K')//karo lub kier
+	{
+		if(color[1] == 'a' || color[1] == 'A') return 3;
+		if(color[1] == 'i' || color[1] == 'I') return 2;
+	}	
+	return -256;
+}
+
+void input_color_string_test()
+{
+	while(1)
+	{
+		printf("podaj nazwe koloru, jaki chcesz wczytac\n");
+		printf("wczytano kolor: %i\n", input_color_string());
+	}
+}
+
+int input_color(char c)
+{
 	int kolor = -1;
 	if(c == 'n' || c == 'N') kolor = 0;
 	if(c == 'h' || c == 'H') kolor = 2;
@@ -74,7 +103,8 @@ int input_color(char c){
 	return kolor;
 }
 
-void show_cards(card *karty, int ile, int numer_gracza){
+void show_cards(card *karty, int ile, int numer_gracza)
+{
 	printf("\nKarty gracza %i:\n", numer_gracza + 1);
 	//chce wyswietlic w 4 rzedach
 	card kier[13];
