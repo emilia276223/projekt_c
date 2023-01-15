@@ -1,7 +1,11 @@
 #include "auction.h" //w tym struct.h
 
+//potzebne do pokazania ostatniej lewy
+card last_trick[4];
+void save_last_trick(card karty_na_stole[4]);//wpisanie ostatniej lewy
+
 //tylko do rogzrywki
-card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n);//wybranie przez uzytkownika co chce zagrac
+card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, int atut);//wybranie przez uzytkownika co chce zagrac
 card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int atut);//wybranie karty przez bota
 int find_winner(card karty_na_stole[4], int atut);//sprawdz kto zbiera dana lewe
 void find_winner_test();//test 
@@ -11,8 +15,9 @@ void show_last_trick();//ostatnia lewa
 void remove_card(card *karty, int i);//usuniecie karty nr i
 
 
-card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n){
 
+card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, int atut)
+{
 	//pokazanie kart gracza i co jest na stole
 	show_cards(karty, ile, gracz);
 	if(n > 0){
@@ -20,18 +25,48 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n){
 		for(int i = 0; i < n; i++){
 			print(karty_na_stole[i]);
 		}
+		printf("\n\n");
 	}
 	else{
-		printf("Wistujesz:\n");
+		printf("Wistujesz:\n\n");
 	}
+
+	//informacje co do wpisywania karty
+	informacje_rozgrywka(atut);
 	
 	//wczytanie jaka katre chce zagrac
 	printf("\nWybierz, ktorą kartę chcesz zagrać\n");
+
+	//umozliwienie: 
+	//-1 - podejrzyj ostatnia lewe
+	//tylko jesli to nie pierwsza runda teraz
+
+	if(ile != 13)//juz nie ma 13 kart, czyli juz po pierwszej rozgrywce
+	{
+		printf("jesli chcesz podejrzec ostatnia lewe wpisz L\n");
+	}
+
 	char numer = 0;
 	scanf("%c", &numer);
 	if(numer == '\n'){
 		scanf("%c", &numer);
 	}
+
+	//jesli podejrzenie lewy
+	if(numer == 'L' || numer == 'l')
+	{
+		//odpowiednio wyswietlenie ostatniej lewy lub napisanie ze to niemozliwe
+		if(ile == 13) printf("Ta opcja ne jest dostępna w pierwszej rundzie\n");
+		else show_last_trick();
+
+		//wczytanie jeszcze raz numeru
+		printf("\nWybierz, ktorą kartę chcesz zagrać\n");
+		scanf("%c", &numer);
+		if(numer == '\n'){
+			scanf("%c", &numer);
+		}
+	}
+	
 	printf("Wczytano numer %c\n", numer);
 	if(numer == '1') getchar();//zabieram 0
 	char kolor;
@@ -71,7 +106,7 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n){
 	}
 	if(!check_card(karty, ile, wynik, poprzedni_kolor)){
 		printf("Niepoprawnie wybrano karte (na przyklad nie posiadasz takiej lub kolor jest niepoprawny), bedziesz musiał_ podać jeszcze raz\n");
-		return choose_card(karty, ile, gracz, karty_na_stole, n);
+		return choose_card(karty, ile, gracz, karty_na_stole, n, atut);
 	}
 	
 	//zwrocenie wyniku jesli wszystko ok
@@ -316,5 +351,19 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 
 void show_last_trick()//ostatnia lewa
 {
-	printf("Ta funkcja nie jest jeszcze dostepna");
+	printf("Ostatnia lewa to:\n");
+	for(int i = 0; i < 4; i++)
+	{
+		print(last_trick[i]);
+		printf("\n");
+	}
+}
+
+
+void save_last_trick(card karty_na_stole[4])//zapisanie ostatniej lewy
+{
+	last_trick[0] = karty_na_stole[0];
+	last_trick[1] = karty_na_stole[1];
+	last_trick[2] = karty_na_stole[2];
+	last_trick[3] = karty_na_stole[3];
 }

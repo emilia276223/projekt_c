@@ -84,23 +84,22 @@ int runda_dla_4_graczy(int dealer, int n, int atut, int *score, int rozgrywajacy
 	card karty_na_stole[4];
 	for(int i = 0; i < 4; i++){
 		clear_screen();
-		informacje_rozgrywka(atut);
 		if(player == dziadek)//jesli dziadek to pokazuje karty rozgrywajacego i dziadka
 		{
 			printf("Karty rozgrywajacego:");
 			show_cards(&cards[rozgrywajacy][0], 13 - n, rozgrywajacy);
-			karty_na_stole[i] = choose_card(&cards[dziadek][0], 13 - n, dziadek, karty_na_stole, i);
+			karty_na_stole[i] = choose_card(&cards[dziadek][0], 13 - n, dziadek, karty_na_stole, i, atut);
 		}
 		else{
 			if(n == 0 && player == dealer)//gracz nie widzie jeszcze kart dziadka bo to 0-wa runda
 			{
-				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i);
+				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);
 			}
 			else
 			{
 				printf("Karty dziadka:");
 				show_cards(&cards[dziadek][0], 13 - n, dziadek);
-				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i);	
+				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);	
 			}
 		}
 		//ustawienie kolejnego gracza
@@ -137,19 +136,15 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 		//jesli kolej uzytkowina i nie jest on dziadkiem
 		if(player == 0 && player != dziadek)//jesli teraz kolej uzytkownika
 		{
-			informacje_rozgrywka(atut);
-
-			//umozliwienie: 
-			//-1 - podejrzyj ostatnia lewe
 			if(n == 0 && player == dealer)//gracz nie widzie jeszcze kart dziadka bo to 0-wa runda
 			{
-				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i);
+				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);
 			}
 			else
 			{
 				printf("Karty dziadka:\n");
 				show_cards(&cards[dziadek][0], 13 - n, dziadek);
-				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i);	
+				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);	
 			}
 		}
 		
@@ -158,7 +153,8 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 		{
 			printf("jestes dziadkiem, wiec rozgrywajacy wybiera twoja karte\n");
 			karty_na_stole[i] = choose_card_bot(&cards[dziadek][0], 13 - n, karty_na_stole, i, atut);
-//			usleep(SLEEP_TIME);
+			printf("\nGracz %i wybrał kartę :", rozgrywajacy + 1);
+			print(karty_na_stole[i]);
 		}
 		
 		//jesli gracz jest rozgrywajacym i kolej dziadka
@@ -174,7 +170,7 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 				show_cards(&cards[0][0], 13 - n, 0);
 			}
 			//karty dziadka:
-			karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i);
+			karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);
 		}
 		
 		//jesli kolej bota
@@ -201,6 +197,7 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 //		printf("Wcisnij ENTER, żeby rozpoczac ruch gracza %i:\n", player + 1);
 		
 	}
+	save_last_trick(karty_na_stole);
 	int new_dealer;
 	new_dealer = (dealer + find_winner(karty_na_stole, atut))%4;
 	*(score + new_dealer) += 1;
