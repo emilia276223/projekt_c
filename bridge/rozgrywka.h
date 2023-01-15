@@ -206,9 +206,9 @@ int find_winner(card karty_na_stole[4], int atut){
 
 void informacje_rozgrywka(int atut)
 {
-	printf("Wpisz odpowiednio jaką kartę chcesz dać: (2 - A) \noraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo 0 jesli pass\n");
+	printf("Wpisz odpowiednio jaką kartę chcesz dać: (2 - A) oraz kolor (pik, kier, karo lub trefl)\n");
 	printf("Atutem jest");
-	print_color(atut);\
+	print_color(atut);
 	printf("\n");
 }
 
