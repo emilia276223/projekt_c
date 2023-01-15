@@ -3,8 +3,8 @@
 
 //obsluga kolejnosci gry
 bool if_new_game();
-int runda_dla_4_graczy(int dealer, int n, int atut, int *score);//zwracam kto zebral lewe
-int runda_z_botem(int dealer, int n, int atut, int *score, bool *wylozone_karty);//zwracam kto zebral lewe
+int runda_dla_4_graczy(int dealer, int n, int atut, int *score, int rozgrywajacy);//zwracam kto zebral lewe
+int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, bool *wylozone_karty);//zwracam kto zebral lewe
 void game(int atut, int *score, int tryb_gry, int rozgrywajacy);
 void new_game();
 void czy_ugrane(card deal,int *score, int rozgrywajacy);
@@ -51,14 +51,14 @@ void game(int atut, int *score, int tryb_gry, int rozgrywajacy)
 		for(int i = 0; i < 13; i++)
 		{
 			//dla kazdej rundu rozpoczenie z ustalonym wczesniej dealerem
-			dealer = runda_dla_4_graczy(dealer,i, atut, score);
+			dealer = runda_dla_4_graczy(dealer,i, atut, score, rozgrywajacy);
 		}
 	}
 	
 	else//1 gracz i 4 razy bot
 	{
 		for(int i = 0; i < 13; i++){
-			dealer = runda_z_botem(dealer,i, atut, score, &wylozone_karty[0][0]);
+			dealer = runda_z_botem(dealer,i, atut, score,rozgrywajacy, &wylozone_karty[0][0]);
 		}
 //		printf("jeszcze nie ma tej opcji gry");
 	}
@@ -77,7 +77,7 @@ bool if_new_game(){
 	return (z == 't' || z == 'T') ? true : false; 
 }
 
-int runda_dla_4_graczy(int dealer, int n, int atut, int *score)//zwracam kto zebral lewe
+int runda_dla_4_graczy(int dealer, int n, int atut, int *score, int rozgrywajacy)//zwracam kto zebral lewe
 {
 	//n - n-ta runda
 	int player = dealer;
@@ -121,7 +121,7 @@ int runda_dla_4_graczy(int dealer, int n, int atut, int *score)//zwracam kto zeb
 	return new_dealer;
 }
 
-int runda_z_botem(int dealer, int n, int atut, int *score, bool *wylozone_karty)//zwracam kto zebral lewe
+int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, bool *wylozone_karty)//zwracam kto zebral lewe
 {
 	//plan na przyszlosc:
 	//bot wybiera najnizsza w kolorze jesli nie ma wyzszej a wyzsza (ale losowa) jak bije	
