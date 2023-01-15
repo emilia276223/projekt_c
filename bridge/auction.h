@@ -1,7 +1,6 @@
 #include "struct.h"
 
 //potrzebne globalne
-int rozgrywajacy = 0;
 int dziadek;
 
 card auction_history[200];//maksymalna mozliwa liczba ruchow w licytacji
@@ -27,7 +26,7 @@ card auction_for_4_players();//licytacja gdy jest 4 graczy
 card auction_with_bot();//gdy 1 gracz i 3 boty
 void auction_clear();//wyczyszczenie danych
 void auction_information(int gracz, card *karty, card deal);
-int ustaw_rozgrywajacego(int zaczynajacy_licytacje);
+int ustaw_rozgrywajacego(int zaczynajacy_licytacje);//ustawienie rozgrywajacegp
 
 
 int count_points(card *karty){
@@ -344,6 +343,7 @@ card podpowiedz_naturalny_bot(card *karty, card deal)//odpowiednio wywola odpowi
 		
 		//w przeciwnym przypadku
 		odp.num = -1;//pass
+		odp.color = 0;
 		print(odp);
 		return odp;
 	}

@@ -33,7 +33,7 @@ char wartosc[][16] = {"0", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ",
 void print(card karta);
 void clear_screen();
 int input_color(char c);
-void show_cards(card *karty, int ile, int numer_gracza);
+void show_cards(card *karty, int ile, int numer_gracza);//wyswietl karty gracza
 
 
 void print(card karta){

@@ -1,8 +1,5 @@
 #include "auction.h" //w tym struct.h
 
-//ustawianie kart itp
-
-
 //tylko do rogzrywki
 card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n);//wybranie przez uzytkownika co chce zagrac
 card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int atut);//wybranie karty przez bota

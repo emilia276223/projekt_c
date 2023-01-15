@@ -1,10 +1,11 @@
 #include "rozgrywka.h"
 
+
 //obsluga kolejnosci gry
 bool if_new_game();
 int runda_dla_4_graczy(int dealer, int n, int atut, int *score);//zwracam kto zebral lewe
-int runda_z_botem(int dealer, int n, int atut, int *score);//zwracam kto zebral lewe
-void game(int atut, int *score, int tryb_gry);
+int runda_z_botem(int dealer, int n, int atut, int *score, bool *wylozone_karty);//zwracam kto zebral lewe
+void game(int atut, int *score, int tryb_gry, int rozgrywajacy);
 void new_game();
 void czy_ugrane(card deal,int *score, int rozgrywajacy);
 
@@ -14,13 +15,35 @@ void dealing_cards();//rozlozenie kart na 4 graczy
 void sort_by_num(card *tab, int ile);//posortowanie po wielkosci kart
 void sort_by_color(card *tab, int ile);//posortowanie po kolorach
 void generate_cards(card *all_cards);//wygenerowanie talii
+void wylozone_karty_reset(bool *wylozone_karty);//wyczyszczenie miejsca na wpisywanie wulozonych kart
+
+//debugging
+void print_wylozone_karty(bool *wylozone_karty);
 void show_deal(card *karty); // tylko do debugowania
 
+void wylozone_karty_reset(bool *wylozone_karty)//ustawienie wszystkich na false
+{
+	for(int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 13; j++)
+		{
+			*(wylozone_karty + i*13 + j) = false;
+		}
+		
+	}
+}
 
-void game(int atut, int *score, int tryb_gry)
+void game(int atut, int *score, int tryb_gry, int rozgrywajacy)
 {
 	//ustawienie dealera
 	int dealer = (rozgrywajacy + 1) % 4;
+
+	//tu beda trzymane wszystkie wylozone karty (zeby zrobic upgrade bota)
+	bool wylozone_karty[5][13];//false - nie wylozona, true - juz wylozona
+	//[1] - pik
+	//[2] - kier ...
+	wylozone_karty_reset(&wylozone_karty[1][0]);
+
 	
 	//jesli gra 4 graczy
 	if(tryb_gry == 0)
@@ -35,7 +58,7 @@ void game(int atut, int *score, int tryb_gry)
 	else//1 gracz i 4 razy bot
 	{
 		for(int i = 0; i < 13; i++){
-			dealer = runda_z_botem(dealer,i, atut, score);
+			dealer = runda_z_botem(dealer,i, atut, score, &wylozone_karty[0][0]);
 		}
 //		printf("jeszcze nie ma tej opcji gry");
 	}
@@ -98,12 +121,12 @@ int runda_dla_4_graczy(int dealer, int n, int atut, int *score)//zwracam kto zeb
 	return new_dealer;
 }
 
-int runda_z_botem(int dealer, int n, int atut, int *score)//zwracam kto zebral lewe
+int runda_z_botem(int dealer, int n, int atut, int *score, bool *wylozone_karty)//zwracam kto zebral lewe
 {
 	//plan na przyszlosc:
 	//bot wybiera najnizsza w kolorze jesli nie ma wyzszej a wyzsza (ale losowa) jak bije	
 	
-	
+
 	//n - n-ta runda
 	//gracz 1 to urzytkownik
 	int player = dealer;
@@ -140,7 +163,14 @@ int runda_z_botem(int dealer, int n, int atut, int *score)//zwracam kto zebral l
 		{
 			printf("jestes rozgrywajacym wiec mozesz wybrac:\n");
 			printf("Twoje karty:");
-			show_cards(&cards[0][0], 13 - n, 0);
+			//jesli juz byl w tej rundzie to ma o 1 karte mniej
+			if(i >= 2){
+				show_cards(&cards[0][0], 13 - n - 1, 0);
+			}
+			else{
+				show_cards(&cards[0][0], 13 - n, 0);
+			}
+			//karty dziadka:
 			karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i);
 		}
 		
@@ -154,6 +184,10 @@ int runda_z_botem(int dealer, int n, int atut, int *score)//zwracam kto zebral l
 			printf("\nGracz %i wybrał kartę :", player + 1);
 			print(karty_na_stole[i]);
 		}
+
+		//dodanie wybranej karty do juz wylozonych
+		*(wylozone_karty + (karty_na_stole[i].num - 2) + karty_na_stole[i].color * 13) = true;
+		if(DEBUG) print_wylozone_karty(wylozone_karty);
 		
 		//ustawienie kolejnego gracza
 		player = (player + 1) % 4;
@@ -204,14 +238,14 @@ void new_game()
 		return;
 	}
 	//ustawienia poczatkowe rozgrywki
-	rozgrywajacy = ustaw_rozgrywajacego(0);//bo na razie licytacje zawsze rozpoczyna gracz 0
+	int rozgrywajacy = ustaw_rozgrywajacego(0);//bo na razie licytacje zawsze rozpoczyna gracz 0
 	dziadek = (rozgrywajacy + 2) % 4;
 	
 	int atut = deal.color;
 	clear_screen();
 	
 	//rozpoczecie rozgrywki
-	game(atut, &score[0], tryb_gry);
+	game(atut, &score[0], tryb_gry, rozgrywajacy);
 	
 	//wyswietlenie wynikow
 	printf("Gra zakonczona, wyniki to: %i, %i, %i, %i, tryb_gry = %i", score[0], score[1], score[2], score[3], tryb_gry);
@@ -322,7 +356,27 @@ void dealing_cards()
 	sort_by_color(&cards[3][0], 13);
 }
 
-void show_deal(card *karty)//tylko przy debugowaniu
+void print_wylozone_karty(bool *wylozone_karty)
+{
+	printf("Do tej pory wylozone karty:\n");
+	card karta;
+	for(int i = 1; i < 5; i++)
+	{
+		for (int j = 0; j < 13; j++)
+		{
+			if(*(wylozone_karty + i*13 + j) == true)
+			{
+				karta.num = j + 2;
+				karta.color = i;
+				print(karta);
+				printf(" , ");
+			}
+		}
+		
+	}
+}
+
+void show_deal(card *karty) // tylko przy debugowaniu
 {
 	show_cards(karty, 13, 0);
 	show_cards(karty + 13, 13, 1);
