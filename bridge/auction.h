@@ -96,19 +96,30 @@ int ustaw_rozgrywajacego(int zaczynajacy_licytacje){//cos nie tak
 		rozgrywajacy--;
 	}
 	
+	if(DEBUG)
+	{
+		printf("ostatnią zalicytowaną rzeczą było ");
+		print(auction_history[rozgrywajacy]);
+		printf("\n i zagral to gracz  %i\n", rozgrywajacy % 4);
+	} 
 	//ustalam co jest zalicytowane (kolor)
 	int kolor = auction_history[rozgrywajacy].color;
 	
+	if(DEBUG) printf("kolor, które jest zalicytowany to %i\n", kolor);
+
 	//znajduje kto z pary pierwszy go powiedzial
 	int gracz = rozgrywajacy - 2;//bede przechodzic co 2 bo to sa co w tej parze sie zadzialo
 	while(gracz >= 0){
-		if(auction_history[gracz].color == kolor || auction_history[gracz].num > 0){//zalicytowal ten kolor (i to nie byl pass)
+		if(auction_history[gracz].color == kolor && auction_history[gracz].num > 0)//zalicytowal ten kolor (i to nie byl pass)
+		{
 			rozgrywajacy = gracz;
+			if(DEBUG) printf("ten sam kolor zostal zalicytowany wczesniej przez gracza %i\n (%i element licytacji)", gracz % 4, gracz);
 		}
 		gracz -= 2;
 	}
 	//teraz gracz jest ustawiony w dobrym miejscu (moment pierwszego zalicytowania danego koloru)
 	//ustalam ktory to gracz
+	if(DEBUG) printf("w takim razie rozgrywajacym bedzie gracz %i", rozgrywajacy);
 	return (rozgrywajacy - zaczynajacy_licytacje) % 4;
 }
 

@@ -34,7 +34,13 @@ void print(card karta);
 void clear_screen();
 int input_color(char c);
 void show_cards(card *karty, int ile, int numer_gracza);//wyswietl karty gracza
+void print_color(int k);
 
+
+void print_color(int k)
+{
+	printf(" %s ", znaczek[k]);
+}
 
 void print(card karta){
 	if(karta.num == -1){

@@ -5,7 +5,7 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n);
 card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int atut);//wybranie karty przez bota
 int find_winner(card karty_na_stole[4], int atut);//sprawdz kto zbiera dana lewe
 void find_winner_test();//test 
-void informacje_rozgrywka();//info dla uzytkownika co wpisywac
+void informacje_rozgrywka(int atut);//info dla uzytkownika co wpisywac
 bool check_card(card *karty,int ile,card wynik,int poprzedni_kolor);//sprawdz czy mozna zagrac te karte (czy ma w kartach oraz czy jest do koloru lub czy nie ma do koloru)
 void show_last_trick();//ostatnia lewa
 void remove_card(card *karty, int i);//usuniecie karty nr i
@@ -161,12 +161,13 @@ int find_winner(card karty_na_stole[4], int atut){
 }
 
 
-void informacje_rozgrywka()
+void informacje_rozgrywka(int atut)
 {
 	printf("Wpisz odpowiednio jaką kartę chcesz dać: (2 - A) \noraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo 0 jesli pass\n");
+	printf("Atutem jest");
+	print_color(atut);\
+	printf("\n");
 }
-
-
 
 card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int atut)
 {
