@@ -220,7 +220,7 @@ void new_game()
 	char a = getchar();
 	if(a == ' ' || a == '\n') getchar();
 	if(a == 'k' || a == 'K') tryb_gry = 1;//z komputerem
-	
+	getchar();//"zjedzenie entera"
 	//nowa licytacja
 	clear_screen();
 	card deal;

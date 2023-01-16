@@ -50,7 +50,7 @@ int count_points(card *karty){
 
 void auction_information(int gracz, card *karty, card deal){
 	printf("Kolej gracza %i\n", gracz + 1);
-	printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: (1 - 7) \noraz kolor (h - kiery, d - karo, s - pik, c - trefl, n - bez atutu), albo 0 jesli pass\n");
+	printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: (1 - 7) \noraz kolor (kier, karo, pik, trefl lub BA), albo 0 jesli pass\n");
 	printf("a to twoje karty :");
 	show_cards(karty, 13, gracz);
 	printf("Liczba twoich punktow to: %i\n", count_points(karty));
@@ -372,13 +372,35 @@ card auction_for_4_players()
 	while(count < 3 || (count < 4 && deal.num == 0)){
 		clear_screen();
 		auction_information(player, &cards[player][0], deal);
-		scanf("%i", &number);
-		if(number == -1){
+
+		char a = getchar();
+		while(!(a == '-' || (a >= '0' && a <= '7'))){
+				if(a == ' ' || a == '\n') a = getchar();
+				else{
+					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
+					a = getchar();
+					a = getchar();
+				}
+			}
+		if(a == '-')
+		{
+			getchar();//"zjedzenie 1"
 			printf("\nTwoja podpowiedz do licytacji w systemie naturalnym to:\n");
 			podpowiedz_naturalny(&cards[player][0], deal);
 			printf("\nCo chcesz zalicytować?\n");
-			scanf("%i", &number);
+			a = getchar();
+			while(!(a >= '0' && a <= '7')){
+				if(a == ' ' || a == '\n') a = getchar();
+				else{
+					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
+					a = getchar();
+					a = getchar();
+				}
+			}
 		}
+
+		number = a - '0';
+
 		card zalicytowane = auction_user_input(number, deal);
 //		zalicytowano(zalicytowane);
 		if(zalicytowane.num == -1){//pass
@@ -415,14 +437,36 @@ card auction_with_bot()
 		if(player == 0)//kiedy kolej gracza
 		{
 			auction_information(player, &cards[player][0], deal);
-			scanf("%i", &number);
-			if(number == -1)//podpowiedz
+
+			char a = getchar();
+			while(!(a == '-' || (a >= '0' && a <= '7'))){
+				if(a == ' ' || a == '\n') a = getchar();
+				else{
+					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
+					a = getchar();
+					a = getchar();
+				}
+			}
+
+			if(a == '-')
 			{
+				getchar();//"zjedzenie 1"
 				printf("\nTwoja podpowiedz do licytacji w systemie naturalnym to:\n");
 				podpowiedz_naturalny(&cards[player][0], deal);
 				printf("\nCo chcesz zalicytować?\n");
-				scanf("%i", &number);
+				a = getchar();
+				while(!(a >= '0' && a <= '7')){
+				if(a == ' ' || a == '\n') a = getchar();
+				else{
+					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
+					a = getchar();
+					a = getchar();
+				}
 			}
+			}
+
+			number = a - '0';
+
 			card zalicytowane = auction_user_input(number, deal);
 			if(zalicytowane.num == -1){//pass
 				count++;
