@@ -444,7 +444,6 @@ card auction_with_bot()
 				else{
 					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
 					a = getchar();
-					a = getchar();
 				}
 			}
 
@@ -459,7 +458,6 @@ card auction_with_bot()
 				if(a == ' ' || a == '\n') a = getchar();
 				else{
 					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
-					a = getchar();
 					a = getchar();
 				}
 			}
