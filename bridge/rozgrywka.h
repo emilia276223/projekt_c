@@ -106,7 +106,14 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 	printf("wybrano karte:\n");
 	print(wynik);
 	printf("\n");
-	
+
+	//mozna cofnac jak sie zle wybralo (wybrac jeszcze raz)
+	printf("Potwiedź, czy to tak karta miała zostać wybrana (t - tak, n - nie)");
+	char a;
+	a = getchar();
+	if(a == ' ' || a == '\n') a = getchar();
+	if(a == 'n' || a == 'N') return choose_card(karty, ile, gracz, karty_na_stole, n, atut);
+
 	//sprawdzenie czy taka moze wybrac
 	int poprzedni_kolor = -1;
 	if(n > 0){//bylo cos wczesniej dane
