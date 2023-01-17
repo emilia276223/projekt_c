@@ -379,7 +379,6 @@ card auction_for_4_players()
 				else{
 					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
 					a = getchar();
-					a = getchar();
 				}
 			}
 		if(a == '-')
@@ -393,7 +392,6 @@ card auction_for_4_players()
 				if(a == ' ' || a == '\n') a = getchar();
 				else{
 					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
-					a = getchar();
 					a = getchar();
 				}
 			}
@@ -414,9 +412,9 @@ card auction_for_4_players()
 		player = (player + 1)%4;
 		//strona przejsciowa
 		clear_screen();
-		getchar();
 		printf("Ruch gracza poprzedniego zakończony, kolejny ruch będzie gracza %i\n", player + 1);
 		printf("Wcisnij ENTER, żeby rozpoczac ruch gracza %i:\n", player + 1);
+		getchar();//musi "zjesc" poprzedniego entera
 		getchar();
 		clear_screen();
 	}
