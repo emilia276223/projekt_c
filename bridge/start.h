@@ -108,7 +108,6 @@ int runda_dla_4_graczy(int dealer, int n, int atut, int *score, int rozgrywajacy
 		getchar();
 		getchar();
 		clear_screen();
-		getchar();
 		printf("Ruch gracza poprzedniego zakończony, kolejny ruch będzie gracza %i\n", player + 1);
 		printf("Wcisnij ENTER, żeby rozpoczac ruch gracza %i:\n", player + 1);
 		getchar();
