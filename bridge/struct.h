@@ -65,20 +65,49 @@ void clear_screen()
 	else if(system("clear") == 0) return;
 }
 
+int number_input()
+{
+	char number[] = "                   ";
+	if(scanf("%s", &number[0]) < 1) return -256;
+
+	if(number[1] == '\0')//tylko jeden znak
+	{
+		if(number[0] >= '0' && number[0] <= '9') return number[0] - '0';
+		if(number[0] == 'A' || number[0] == 'a') return 14;
+		if(number[0] == 'K' || number[0] == 'k') return 13;
+		if(number[0] == 'Q' || number[0] == 'q') return 12;
+		if(number[0] == 'J' || number[0] == 'j') return 11;
+		if(number[0] == 'L' || number[0] == 'l') return -2;
+
+		else return -256;
+	}
+	else{
+		if(strcmp(number, "10") == 0) return 10;
+		if(strcmp(number, "-1") == 0) return -1;
+		else return -256;
+	}
+}
+
 int input_color_string()
 {
 	char color[] = "                   ";
 	if(scanf("%s", &color[0]) < 1) return -256;
 	if(DEBUG)printf("Wczytano: <%s>", color);
 
-	if(color[0] == 't' || color[0] == 'T') return 4;//trefl
-	if(color[0] == 'b' || color[0] == 'B') return 0;//BA
-	if(color[0] == 'p' || color[0] == 'P') return 1;//pik
-	if(color[0] == 'k' || color[0] == 'K')//karo lub kier
-	{
-		if(color[1] == 'a' || color[1] == 'A') return 3;
-		if(color[1] == 'i' || color[1] == 'I') return 2;
-	}	
+	// if(color[0] == 't' || color[0] == 'T') return 4;//trefl
+	// if(color[0] == 'b' || color[0] == 'B') return 0;//BA
+	// if(color[0] == 'p' || color[0] == 'P') return 1;//pik
+	// if(color[0] == 'k' || color[0] == 'K')//karo lub kier
+	
+	if(strcmp(color, "Trefl") == 0 || strcmp(color, "trefl") == 0) return 4;//trefl
+	if(strcmp(color, "BA") == 0 || strcmp(color, "ba") == 0) return 0;//BA
+	if(strcmp(color, "Pik") == 0 || strcmp(color, "pik") == 0) return 1;//pik
+	if(strcmp(color, "Karo") == 0 || strcmp(color, "karo") == 0) return 3;//karo lub kier
+	if(strcmp(color, "Kier") == 0 || strcmp(color, "kier") == 0) return 3;
+	// {
+		// if(color[1] == 'a' || color[1] == 'A') return 3;
+		// if(color[1] == 'i' || color[1] == 'I') return 2;
+	// }	
 	return -256;
 }
 
@@ -91,7 +120,7 @@ void input_color_string_test()
 	}
 }
 
-int input_color(char c)
+int input_color(char c)//stara wersja
 {
 	int kolor = -1;
 	if(c == 'n' || c == 'N') kolor = 0;

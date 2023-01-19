@@ -43,17 +43,18 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 
 	if(ile != 13)//juz nie ma 13 kart, czyli juz po pierwszej rozgrywce
 	{
-		printf("jesli chcesz podejrzec ostatnia lewe wpisz L\n");
+		printf("Jeśli chcesz podejrzeć ostatnią lewę wpisz L\n");
 	}
 
-	char numer = 0;
-	if(scanf("%c", &numer) < 1) printf(" ");
-	if(numer == '\n'){
-		if(scanf("%c", &numer) < 1) printf(" ");
+	char numer = number_input();
+	while(numer < 2 && numer != -2)
+	{
+		printf("Niepoprawnie podano numer karty, proszę spróbować ponownie: \n");
+		numer = number_input();
 	}
 
 	//jesli podejrzenie lewy
-	if(numer == 'L' || numer == 'l')
+	if(numer == -2)//L lub l
 	{
 		//odpowiednio wyswietlenie ostatniej lewy lub napisanie ze to niemozliwe
 		if(ile == 13) printf("Ta opcja ne jest dostępna w pierwszej rundzie\n");
@@ -65,14 +66,17 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 
 		//wczytanie jeszcze raz numeru
 		printf("\nWybierz, ktorą kartę chcesz zagrać\n");
-		if(scanf("%c", &numer) < 1) printf(" ");
-		if(numer == '\n'){
-			if(scanf("%c", &numer) < 1) printf(" ");
+		numer = number_input();
+		while(numer < 2)
+		{
+			printf("Niepoprawnie podano numer karty, proszę spróbować ponownie: \n");
+			numer = number_input();
 		}
 	}
 	
 	if(DEBUG) printf("Wczytano numer %c\n", numer);
-	if(numer == '1') getchar();//zabieram 0
+	// char druga_cyfra;
+	// if(numer == '1') druga_cyfra = getchar();//zabieram 0
 
 	//wczytanie koloru
 	int color = input_color_string();
@@ -81,42 +85,11 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 		printf("Niepoprawnie wpisano kolor, proszę wpisać jeszcze raz:");
 		color = input_color_string();
 	}
-	// char kolor;
-	// while(scanf(" %c",&kolor) < 1){
-		// printf("\nBłąd przy podaniu karty, proszę spróbować jeszcze raz\n");
-	// }
-	card wynik;
-	if(numer >= '2' && numer <= '9'){//2 - 9
-		wynik.num = numer - '0';
-	}
-	if(numer == '1'){//10
-		wynik.num = 10;
-	}
-	if(numer == 'J' || numer == 'j'){//10
-		wynik.num = 11;
-	}
-	if(numer == 'Q' || numer == 'q'){//10
-		wynik.num = 12;
-	}
-	if(numer == 'K' || numer == 'k'){//10
-		wynik.num = 13;
-	}
-	if(numer == 'A' || numer == 'a'){//10
-		wynik.num = 14;
-	}
-	// wynik.color = input_color(kolor);
-	wynik.color = color;
-	//wyswietlenie wyboru
-	// printf("wybrano karte:\n");
-	// print(wynik);
-	// printf("\n");
 
-	//mozna cofnac jak sie zle wybralo (wybrac jeszcze raz)
-	// printf("Potwiedź, czy to tak karta miała zostać wybrana (t - tak, n - nie)");
-	// char a;
-	// a = getchar();
-	// if(a == ' ' || a == '\n') a = getchar();
-	// if(a == 'n' || a == 'N') return choose_card(karty, ile, gracz, karty_na_stole, n, atut);
+	card wynik;
+	// wynik.color = input_color(kolor);
+	wynik.num = numer;
+	wynik.color = color;
 
 	//sprawdzenie czy taka moze wybrac
 	int poprzedni_kolor = -1;
@@ -281,6 +254,10 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 	//jesli ma karte w tym kolorze to losuje jedna z nich
 	if(czy_ma_w_kolorze)
 	{
+		//jesli ma wygrywajaca to losowa z nich
+		//jesli nie to najnizsza
+
+
 		int x = rand() % (ostatnia - pierwsza + 1);
 		x += pierwsza;
 		
@@ -324,6 +301,8 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 	
 	if(czy_ma_atut)//jesli ma atut to ktoras z nich wybieram
 	{
+		//jesli ma wygrywajacy atut(na stole nie ma wyzszego) -> losowy z tych wygrywajacych
+		//jak nie ma i ma inny kolor to coś z innego koloru
 		if(DEBUG) printf("pierwsza = %i, ostatnia = %i\n", pierwsza_a, ostatnia_a);
 		int x = rand() % (ostatnia_a - pierwsza_a + 1);
 		x += pierwsza_a;
@@ -359,7 +338,7 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 	//sprawdzenie czy istnieje
 	if(DEBUG && (miejsce < 0 || miejsce >= ile))
 	{
-		printf("miejsce karty nie istnieje (najnizsza, miejsce = %i)\n", miejsce);
+		printf("Miejsce karty nie istnieje (najnizsza, miejsce = %i)\n", miejsce);
 		wynik.num = 0;
 		wynik.color = 0;
 		return wynik;
@@ -388,3 +367,4 @@ void save_last_trick(card karty_na_stole[4])//zapisanie ostatniej lewy
 	last_trick[2] = karty_na_stole[2];
 	last_trick[3] = karty_na_stole[3];
 }
+

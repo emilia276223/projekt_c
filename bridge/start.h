@@ -123,18 +123,26 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 {
 	//plan na przyszlosc:
 	//bot wybiera najnizsza w kolorze jesli nie ma wyzszej a wyzsza (ale losowa) jak bije	
-	
 
 	//n - n-ta runda
 	//gracz 1 to urzytkownik
 	int player = dealer;
-	card karty_na_stole[4] = {0,0,0,0};
+	card karty_na_stole[4] = {{0,0},{0,0},{0,0},{0,0}};
 	for(int i = 0; i < 4; i++){
 		clear_screen();
 		
 		//jesli kolej uzytkowina i nie jest on dziadkiem
 		if(player == 0 && player != dziadek)//jesli teraz kolej uzytkownika
 		{
+			//wyswietlenie co sie zadzialo w ostatniej runddzie
+			if(n > 0)//to nie pierwsza runda
+			{
+				printf("Poprzednia tura:\n");
+				show_last_trick();
+				printf("Więc zebrał gracz %i\n", dealer);
+			}
+
+			//wybranie karty
 			if(n == 0 && player == dealer)//gracz nie widzie jeszcze kart dziadka bo to 0-wa runda
 			{
 				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);
@@ -142,9 +150,11 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 			else
 			{
 				printf("Karty dziadka:\n");
-				show_cards(&cards[dziadek][0], 13 - n, dziadek);
+				show_cards(&cards[dziadek][0], 13 - n, dziadek);//poprawic bo jest zle bo sie czasem o 1 za duzo wyswietla
 				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);	
 			}
+		getchar();
+		clear_screen();
 		}
 		
 		//jesli gracz jest dziadkiem
@@ -152,14 +162,16 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 		{
 			printf("jestes dziadkiem, wiec rozgrywajacy wybiera twoja karte\n");
 			karty_na_stole[i] = choose_card_bot(&cards[dziadek][0], 13 - n, karty_na_stole, i, atut);
-			printf("\nGracz %i wybrał kartę :", rozgrywajacy + 1);
-			print(karty_na_stole[i]);
+			// printf("\nGracz %i wybrał kartę :", rozgrywajacy + 1);
+			// print(karty_na_stole[i]);
+		getchar();
+		clear_screen();
 		}
 		
 		//jesli gracz jest rozgrywajacym i kolej dziadka
 		else if(player == 2 && rozgrywajacy == 0)
 		{
-			printf("jestes rozgrywajacym wiec mozesz wybrac:\n");
+			printf("jestes rozgrywajacym wiec wybierasz, co ma postawic dziadek:\n");
 			printf("Twoje karty:");
 			//jesli juz byl w tej rundzie to ma o 1 karte mniej
 			if(i >= 2){
@@ -170,6 +182,8 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 			}
 			//karty dziadka:
 			karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);
+		getchar();
+		clear_screen();
 		}
 		
 		//jesli kolej bota
@@ -177,10 +191,10 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 		{
 			//tutaj nie ma znaczenia czy ktos jest dziadkiem czy rozgrywajacym, bo i tak losuje karte
 			//bot i tak nie sugeruje sie innymi kartami		
-			printf("Ruch gracza %i\n", player + 1);		
+			// printf("Ruch gracza %i\n", player + 1);		
 			karty_na_stole[i] = choose_card_bot(&cards[player][0], 13 - n, karty_na_stole, i, atut);
-			printf("\nGracz %i wybrał kartę :", player + 1);
-			print(karty_na_stole[i]);
+			// printf("\nGracz %i wybrał kartę :", player + 1);
+			// print(karty_na_stole[i]);
 		}
 
 		//dodanie wybranej karty do juz wylozonych
@@ -189,8 +203,6 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 		
 		//ustawienie kolejnego gracza
 		player = (player + 1) % 4;
-		getchar();
-		clear_screen();
 //		getchar();
 //		printf("Ruch gracza poprzedniego zakończony, kolejny ruch będzie gracza %i\n", player + 1);
 //		printf("Wcisnij ENTER, żeby rozpoczac ruch gracza %i:\n", player + 1);
@@ -234,6 +246,7 @@ void new_game()
 	//sprawdzenie czy bedzie rozgrywka
 	if(deal.num == 0){
 		printf("Licytacja zakonczona niepowodzeniem\n\n");
+		getchar();
 		return;
 	}
 	//ustawienia poczatkowe rozgrywki
@@ -241,6 +254,12 @@ void new_game()
 	dziadek = (rozgrywajacy + 2) % 4;
 	
 	int atut = deal.color;
+	clear_screen();
+
+	//wyswietlenie wynikow licytacji
+	printf("Został zalicytowany kontrakt: ");
+	print(deal);
+	getchar();
 	clear_screen();
 	
 	//rozpoczecie rozgrywki

@@ -15,7 +15,7 @@ card cards[4][13];//[i][j][k] - i-ty gracz, [j] j - ta karta
 int count_points(card *karty);//policz punkty w danych kartach
 void print_last_4_auction(int gracz);//wyswietlenie ostatich 4 w licytacji
 void zalicytowano(card lic);//zapisanie tego, co zostalo zalicytowane
-card auction_user_input(int number, card deal);//wybranie przez uzytkownika co chce zalicytowac
+card auction_user_input(card deal, int player);//wybranie przez uzytkownika co chce zalicytowac
 void naturalny_odpowiedz_bot(card *karty, int *punkty_p, int *suma_p, int *max_z);//odpowiedz w systemie naturalnym dla bota (zeby wiedziec +-co zalicytowac)
 void naturalny_odpowiedz(card *karty);//odpowiedz w naturalnym dla uzytkownika (czyli ladny opis + odp dla bota)
 card naturalny_otwarcie(card *karty, card deal);//podpowiedz w naturalnym dla uzytkownika na otwarcie
@@ -370,6 +370,55 @@ card podpowiedz_naturalny_bot(card *karty, card deal)//odpowiednio wywola odpowi
 	}
 }
 
+card auction_user_input(card deal, int player){
+	card wynik;
+
+	//wczytanie numeru + ewentyalnie podpowiedz
+	int numer = number_input();
+	while(numer < -1 || numer > 7){
+		printf("Podano niepoprawnie, proszę podać ponownie wysokość, na jakiej licytujesz\n");
+		numer = number_input();
+	} 
+
+	if(numer == -1)
+	{
+		// getchar();//"zjedzenie 1"
+		printf("\nTwoja podpowiedz do licytacji w systemie naturalnym to:\n");
+		podpowiedz_naturalny(&cards[player][0], deal);
+		printf("\nCo chcesz zalicytować?\n");
+		numer = number_input();
+		while(numer < 0 || numer > 7){
+			printf("Podano niepoprawnie, proszę podać ponownie wysokość, na jakiej licytujesz\n");
+			numer = number_input();
+		} 
+	}
+
+	if(numer == 0){//pass
+		wynik.num = -1;
+		wynik.color = -1;
+		zalicytowano(wynik);
+		return wynik;
+	}
+
+	//nie pass
+	//wczytanie koloru:
+	int color = input_color_string();
+	while(color == -256)
+	{
+		printf("Niepoprawnie wpisany kolor, proszę wpisać jeszcze raz:\n");
+		color = input_color_string();
+	}
+
+	if(numer < deal.num || (numer == deal.num && color >= deal.color)){
+		printf("To jest mniej niż poprzednio, wiec nie mozna tego zalicytowac, sprobuj jeszcze raz: \n");
+		return auction_user_input(deal, player);
+	}
+	wynik.num = numer;
+	wynik.color = color;
+	zalicytowano(wynik);
+	return wynik;
+}
+
 card auction_for_4_players()
 {
 	card deal;
@@ -377,39 +426,12 @@ card auction_for_4_players()
 	deal.color = 0;
 	printf("\nLICYTACJA \n");
 	int player = 0;//startujemu od 1
-	int number;
 	int count = 0;
 	while(count < 3 || (count < 4 && deal.num == 0)){
 		clear_screen();
 		auction_information(player, &cards[player][0], deal);
 
-		char a = getchar();
-		while(!(a == '-' || (a >= '0' && a <= '7'))){
-				if(a == ' ' || a == '\n') a = getchar();
-				else{
-					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
-					a = getchar();
-				}
-			}
-		if(a == '-')
-		{
-			getchar();//"zjedzenie 1"
-			printf("\nTwoja podpowiedz do licytacji w systemie naturalnym to:\n");
-			podpowiedz_naturalny(&cards[player][0], deal);
-			printf("\nCo chcesz zalicytować?\n");
-			a = getchar();
-			while(!(a >= '0' && a <= '7')){
-				if(a == ' ' || a == '\n') a = getchar();
-				else{
-					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
-					a = getchar();
-				}
-			}
-		}
-
-		number = a - '0';
-
-		card zalicytowane = auction_user_input(number, deal);
+		card zalicytowane = auction_user_input(deal, player);
 //		zalicytowano(zalicytowane);
 		if(zalicytowane.num == -1){//pass
 			count++;
@@ -437,7 +459,6 @@ card auction_with_bot()
 	deal.num = 0;
 	deal.color = 0;
 	int player = 0;//startujemu od 1
-	int number;
 	int count = 0;
 	while(count < 3 || (count < 4 && deal.num == 0))//dopoki nie ma 3 pasow z rzedu lub 4 jesli nic nie bylo zalicytowane
 	{
@@ -445,35 +466,7 @@ card auction_with_bot()
 		if(player == 0)//kiedy kolej gracza
 		{
 			auction_information(player, &cards[player][0], deal);
-
-			char a = getchar();
-			while(!(a == '-' || (a >= '0' && a <= '7'))){
-				if(a == ' ' || a == '\n') a = getchar();
-				else{
-					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
-					a = getchar();
-				}
-			}
-
-			if(a == '-')
-			{
-				getchar();//"zjedzenie 1"
-				printf("\nTwoja podpowiedz do licytacji w systemie naturalnym to:\n");
-				podpowiedz_naturalny(&cards[player][0], deal);
-				printf("\nCo chcesz zalicytować?\n");
-				a = getchar();
-				while(!(a >= '0' && a <= '7')){
-				if(a == ' ' || a == '\n') a = getchar();
-				else{
-					printf("Niepoprawnie podany numer, proszę podać jeszcze raz\n");
-					a = getchar();
-				}
-			}
-			}
-
-			number = a - '0';
-
-			card zalicytowane = auction_user_input(number, deal);
+			card zalicytowane = auction_user_input(deal, player);
 			if(zalicytowane.num == -1){//pass
 				count++;
 			}
@@ -506,52 +499,3 @@ card auction_with_bot()
 	}
 	return deal;
 }
-
-card auction_user_input(int number, card deal){
-	card wynik;
-	if(number == 0){//pass
-		wynik.num = -1;
-		wynik.color = -1;
-		zalicytowano(wynik);
-		return wynik;
-	}
-	//jesli niepoprawny numer
-	if(number < 0 || number > 7){
-		printf("Niepoprawnie wpisana liczba, proszę podać jeszcze raz ( 0 - pass lub liczba z zakresu 1 - 7)");
-		if(scanf("%i", &number) < 1) printf(" ");
-		return auction_user_input(number, deal);
-	}
-	//nie pass
-	// int color = -1;
-	// char c;
-	// if(scanf(" %c", &c) < 1){//if someone enters wrong thing
-	// 	printf("Niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
-	// 	scanf("%i", &number);
-	// 	return auction_user_input(number, deal);
-	// }
-	// color = input_color(c);
-	// if(color == -1){//blad wczytywania
-	// 	printf("Niepoprawnie wpisany kolor, proszę podać jeszcze raz (h, d, s, c lub n)");
-	// 	scanf("%i", &number);
-	// 	return auction_user_input(number, deal);
-	// }
-
-	//wczytanie koloru:
-	int color = input_color_string();
-	while(color == -256)
-	{
-		printf("Niepoprawnie wpisany kolor, proszę wpisać jeszcze raz:\n");
-		color = input_color_string();
-	}
-
-	if(number < deal.num || (number == deal.num && color >= deal.color)){
-		printf("To jest mniej niż poprzednio, wiec nie mozna tego zalicytowac, sprobuj jeszcze raz: \n");
-		if(scanf("%i", &number) < 1) printf(" ");
-		return auction_user_input(number, deal);
-	}
-	wynik.num = number;
-	wynik.color = color;
-	zalicytowano(wynik);
-	return wynik;
-}
-
