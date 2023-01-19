@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define DEBUG 1
+#define DEBUG 0
 //to pewnie potrzebuje
 struct card{
 	int num;
@@ -33,7 +33,7 @@ char wartosc[][16] = {"0", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ",
 void print(card karta);
 void clear_screen();
 int input_color(char c);
-void show_cards(card *karty, int ile, int numer_gracza);//wyswietl karty gracza
+void show_cards(card *karty, int ile);//wyswietl karty gracza
 void print_color(int k);
 
 
@@ -103,7 +103,7 @@ int input_color_string()
 	if(strcmp(color, "BA") == 0 || strcmp(color, "ba") == 0) return 0;//BA
 	if(strcmp(color, "Pik") == 0 || strcmp(color, "pik") == 0) return 1;//pik
 	if(strcmp(color, "Karo") == 0 || strcmp(color, "karo") == 0) return 3;//karo lub kier
-	if(strcmp(color, "Kier") == 0 || strcmp(color, "kier") == 0) return 3;
+	if(strcmp(color, "Kier") == 0 || strcmp(color, "kier") == 0) return 2;
 	// {
 		// if(color[1] == 'a' || color[1] == 'A') return 3;
 		// if(color[1] == 'i' || color[1] == 'I') return 2;
@@ -136,9 +136,9 @@ int input_color(char c)//stara wersja
 	return kolor;
 }
 
-void show_cards(card *karty, int ile, int numer_gracza)
+void show_cards(card *karty, int ile)
 {
-	printf("\nKarty gracza %i:\n", numer_gracza + 1);
+	// printf("\nKarty gracza %i:\n", numer_gracza + 1);
 	//chce wyswietlic w 4 rzedach
 	card kier[13];
 	card karo[13];

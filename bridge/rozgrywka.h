@@ -19,7 +19,7 @@ void remove_card(card *karty, int i);//usuniecie karty nr i
 card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, int atut)
 {
 	//pokazanie kart gracza i co jest na stole
-	show_cards(karty, ile, gracz);
+	show_cards(karty, ile);
 	if(n > 0){
 		printf("Na stole są: \n");
 		for(int i = 0; i < n; i++){

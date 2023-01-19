@@ -52,8 +52,8 @@ int count_points(card *karty)
 void auction_information(int gracz, card *karty, card deal){
 	printf("Kolej gracza %i\n\n", gracz + 1);
 	printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: (1 - 7) \noraz kolor (kier, karo, pik, trefl lub BA), albo 0 jesli pass\n");
-	printf("a to twoje karty :");
-	show_cards(karty, 13, gracz);
+	printf("a to twoje karty :\n");
+	show_cards(karty, 13);
 	printf("Liczba twoich punktow to: %i\n\n", count_points(karty));
 	if(deal.num != 0)
 	{
@@ -258,13 +258,13 @@ void naturalny_odpowiedz_bot(card *karty, int *punkty_p, int *suma_p, int *max_z
 			punkty_partnera = 15;
 		}
 	}
-	if(auction_history[pierwsza_p].num == -1){//jesli pas
+	else if(auction_history[pierwsza_p].num == -1){//jesli pas
 		punkty_partnera = 0;
 	}
-	if(auction_history[pierwsza_p].num == 2){//jesli 2
+	else if(auction_history[pierwsza_p].num == 2){//jesli 2
 		punkty_partnera = 12;
 	}
-	if(auction_history[pierwsza_p].num == 3){
+	else if(auction_history[pierwsza_p].num == 3){
 		if(auction_history[pierwsza_p].color != 0){//3 w kolor
 			punkty_partnera = 7;
 		}
