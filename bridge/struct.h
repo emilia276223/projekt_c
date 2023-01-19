@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <wchar.h>
+#include <locale.h>
 
 #define DEBUG 1
 //to pewnie potrzebuje
@@ -13,6 +15,8 @@ struct card{
 	int color;
 };
 typedef struct card card;
+
+#define COLOR_SCHEME 1
 
 
 //it will always be: N is dealer, S is waiting, game starts from 
@@ -35,7 +39,22 @@ void clear_screen();
 int input_color(char c);
 void show_cards(card *karty, int ile);//wyswietl karty gracza
 void print_color(int k);
+void red();
+void gray();
+void reset();
 
+
+void red () {
+    printf("\033[1;31m");   
+}
+
+void gray() {
+	printf("\033[2;75m");  
+}
+
+void reset () {
+	printf("\033[0m");
+}
 
 void print_color(int k)
 {
@@ -56,7 +75,24 @@ void print(card karta)
 		return;
 	}
 	if(karta.num == 0) return;
-	printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
+	if(COLOR_SCHEME == 0){
+		printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
+	}
+	else
+	{
+		if(karta.color == 1 || karta.color == 4)
+		{
+			gray();
+			printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
+			reset();
+		}
+		if(karta.color == 2 || karta.color == 3)
+		{
+			red();
+			printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
+			reset();
+		}
+	}
 }
 
 void clear_screen()
