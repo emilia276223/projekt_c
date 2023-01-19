@@ -177,6 +177,12 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 		else if(player == 2 && rozgrywajacy == 0)
 		{
 			printf("Jestes rozgrywajacym wiec wybierasz, jaką kartę na położyć dziadek:\n");
+			if(n > 0)//to nie pierwsza runda
+			{
+				printf("Poprzednia tura:\n");
+				show_last_trick();
+				printf("Więc zebrał gracz %i\n", dealer);
+			}
 			printf("Dla przypomnienia Twoje karty:\n");
 			show_cards(&cards[0][0], 13 - n);
 			printf("\n A to karty dziadka, wybierz jedną z nich:\n");

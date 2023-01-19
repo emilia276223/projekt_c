@@ -200,13 +200,6 @@ void informacje_rozgrywka(int atut)
 
 card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int atut)
 {
-	//wyswietlenie kart na stole
-	// printf("Na stole są: \n");
-	// for(int i = 0; i < n; i++){
-		// print(karty_na_stole[i]);
-	// }
-	// printf("\n");
-	
 	//wybranie karty do zagrania
 	card wynik;
 	if(DEBUG) printf("a\n");
@@ -227,8 +220,6 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 		remove_card(karty, x);
 		return wynik;
 	}
-	
-	
 	//jesli juz cos bylo
 	
 	//sprawdzenie czy ma karte w tym kolorze
@@ -255,9 +246,45 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 	if(czy_ma_w_kolorze)
 	{
 		//jesli ma wygrywajaca to losowa z nich
-		//jesli nie to najnizsza
+		
+		//jesli nie przebil nikt atutem
+		bool czy_byl_atut = false;
+		for(int i = 0; i < n; i++){
+			if(karty_na_stole[i].color == atut) czy_byl_atut = true;
+		}
+		//jesli bym atut to najmniejsza
+		if(czy_byl_atut)
+		{
+			wynik = *(karty + ostatnia);
+			remove_card(karty, ostatnia);
+			return wynik;
+		}
+		//jesli nie bylo to najnizsza bijaca wszystkie w kolorze
+		int maxi = 0;
+		for(int i = 0; i < n; i++){
+			if(karty_na_stole[i].num > maxi && karty_na_stole[i].color == poprzedni_kolor){
+				maxi = karty_na_stole[i].num;
+			}
+		}
+		//jesli nie ma bijacej to najnizsza z koloru
+		if((karty + pierwsza) -> num < maxi){
+			wynik = *(karty + ostatnia);
+			remove_card(karty, ostatnia);
+			return wynik;
+		}
 
+		//jesli nie to losowa bijaca wszystkie (???)
+		//ustawienie ostatniej na taka ktora wszystko bije (bijace wszystkie miedzy pierwsza a ostatnia)
+		while((karty + ostatnia) -> num < maxi && ostatnia > pierwsza) ostatnia--;
+		//jesli to ostatnia karta <=> n == 3 to najnizsza z nich
+		if(n == 3)
+		{
+			wynik = *(karty + ostatnia);
+			remove_card(karty, ostatnia);
+			return wynik;
+		}
 
+		//jak nie to losowa
 		int x = rand() % (ostatnia - pierwsza + 1);
 		x += pierwsza;
 		
@@ -301,24 +328,61 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 	
 	if(czy_ma_atut)//jesli ma atut to ktoras z nich wybieram
 	{
-		//jesli ma wygrywajacy atut(na stole nie ma wyzszego) -> losowy z tych wygrywajacych
-		//jak nie ma i ma inny kolor to coś z innego koloru
-		if(DEBUG) printf("pierwsza = %i, ostatnia = %i\n", pierwsza_a, ostatnia_a);
-		int x = rand() % (ostatnia_a - pierwsza_a + 1);
-		x += pierwsza_a;
-		
-		//sprawdzenie czy karta istnieje
-		if(DEBUG && (x < 0 || x >= ile))
+		//czy pojawil sie atut na stole?
+		bool czy_byl_atut = false;
+		for(int i = 0; i < n; i++){
+			if(karty_na_stole[i].color == atut) czy_byl_atut = true;
+		}
+
+		//jesli byl atut to daje wiekszy lub inny kolor jak nie ma wiekszego
+		if(czy_byl_atut)
 		{
-			printf("miejsce karty nie istnieje (atut, x = %i)\n", x);
-			wynik.num = 0;
-			wynik.color = 0;
+			int maxi = 0;
+			for(int i = 0; i < n; i++){
+				if(karty_na_stole[i].num > maxi && karty_na_stole[i].color == atut){
+					maxi = karty_na_stole[i].num;
+				}
+			}
+
+			//jesli ma wygrywajacy atut(na stole nie ma wyzszego) -> losowy z tych wygrywajacych
+			if((karty + pierwsza_a) -> num > maxi)//jest co najmniej jedna wieksza
+			{
+				//znalezienie przedzialu wygrywajacych
+				while((karty + ostatnia_a) -> num < maxi) ostatnia_a --;
+				//jesli ostatnia karta to daje najnizsza
+				if(n == 3)
+				{
+					wynik = *(karty + ostatnia_a);
+					remove_card(karty, ostatnia_a);
+					return wynik;
+				}
+				//jak nie to losuje wygrywajaca
+				int x = rand() % (ostatnia_a - pierwsza_a + 1);
+				x += pierwsza_a;
+				wynik = *(karty + x);
+				remove_card(karty, x);
+				return wynik;
+			}
+			//w przeciwnym wypadku cos z innego koloru (automatycznie)
+		}
+		//jak nie ma i ma inny kolor to coś z innego koloru - zrobi automatycznie bo nie bylo returna
+		
+		else //jesli nie bylo atutu to
+		{
+			//jesli ostatnia to najmniejszy atut
+			if(n == 3)
+			{
+				wynik = *(karty + ostatnia_a);
+				remove_card(karty, ostatnia_a);
+				return wynik;
+			}
+			//w przeciwnym przypadku losowa z nich
+			int x = rand() % (ostatnia_a - pierwsza_a + 1);
+			x += pierwsza_a;
+			wynik = *(karty + x);
+			remove_card(karty, x);
 			return wynik;
 		}
-		
-		wynik = *(karty + x);
-		remove_card(karty, x);
-		return wynik;
 	}
 	
 	if(DEBUG) printf("nie ma w atucie\n");
