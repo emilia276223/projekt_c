@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define DEBUG 0
+#define DEBUG 1
 //to pewnie potrzebuje
 struct card{
 	int num;
@@ -26,7 +26,7 @@ typedef struct card card;
 //4 - clubs
 
 //tylko dla print
-char znaczek[][5] = {"BA", "pik", "kier", "karo", "trefl"};
+char znaczek[][6] = {"BA", "pik", "kier", "karo", "trefl"};
 char wartosc[][16] = {"0", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10", "J ", "Q ", "K ", "A "};
 
 //potrzebne wszedzie:
@@ -44,32 +44,36 @@ void print_color(int k)
 
 void print(card karta)
 {
-	if(karta.num == -1){
+	if(karta.num == -1){//pass
 		printf("pass");
+		return;
+	}
+	if(karta.num == -2){//nic
 		return;
 	}
 	if(karta.num < 0 || karta.num > 15 || karta.color < 0 || karta.color > 4){
 		printf("Karta nie pasuje, wartosci to : numer = %i, kolor = %i", karta.num, karta.color);
 		return;
 	}
+	if(karta.num == 0) return;
 	printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
 }
 
 void clear_screen()
-{//bedzie w wyswietlanie
+{//bedzie w wyswietlanieNa ten moment
 	if(DEBUG) printf("\n\n\n\n\n\n\n");
-	else system("clear");
+	else if(system("clear") == 0) return;
 }
 
 int input_color_string()
 {
-	char color[] = "     ";
-	scanf("%s", &color[0]);
+	char color[] = "                   ";
+	if(scanf("%s", &color[0]) < 1) return -256;
 	if(DEBUG)printf("Wczytano: <%s>", color);
 
-	if(color[0] == 't' || color[0] == 'T') return 4;
-	if(color[0] == 'b' || color[0] == 'B') return 0;
-	if(color[0] == 'p' || color[0] == 'P') return 1;
+	if(color[0] == 't' || color[0] == 'T') return 4;//trefl
+	if(color[0] == 'b' || color[0] == 'B') return 0;//BA
+	if(color[0] == 'p' || color[0] == 'P') return 1;//pik
 	if(color[0] == 'k' || color[0] == 'K')//karo lub kier
 	{
 		if(color[1] == 'a' || color[1] == 'A') return 3;

@@ -47,9 +47,9 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 	}
 
 	char numer = 0;
-	scanf("%c", &numer);
+	if(scanf("%c", &numer) < 1) printf(" ");
 	if(numer == '\n'){
-		scanf("%c", &numer);
+		if(scanf("%c", &numer) < 1) printf(" ");
 	}
 
 	//jesli podejrzenie lewy
@@ -57,13 +57,17 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 	{
 		//odpowiednio wyswietlenie ostatniej lewy lub napisanie ze to niemozliwe
 		if(ile == 13) printf("Ta opcja ne jest dostępna w pierwszej rundzie\n");
-		else show_last_trick();
+		else
+		{
+			printf("Ostatnia lewa:\n");
+			show_last_trick();
+		}
 
 		//wczytanie jeszcze raz numeru
 		printf("\nWybierz, ktorą kartę chcesz zagrać\n");
-		scanf("%c", &numer);
+		if(scanf("%c", &numer) < 1) printf(" ");
 		if(numer == '\n'){
-			scanf("%c", &numer);
+			if(scanf("%c", &numer) < 1) printf(" ");
 		}
 	}
 	
@@ -103,16 +107,16 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 	// wynik.color = input_color(kolor);
 	wynik.color = color;
 	//wyswietlenie wyboru
-	printf("wybrano karte:\n");
-	print(wynik);
-	printf("\n");
+	// printf("wybrano karte:\n");
+	// print(wynik);
+	// printf("\n");
 
 	//mozna cofnac jak sie zle wybralo (wybrac jeszcze raz)
-	printf("Potwiedź, czy to tak karta miała zostać wybrana (t - tak, n - nie)");
-	char a;
-	a = getchar();
-	if(a == ' ' || a == '\n') a = getchar();
-	if(a == 'n' || a == 'N') return choose_card(karty, ile, gracz, karty_na_stole, n, atut);
+	// printf("Potwiedź, czy to tak karta miała zostać wybrana (t - tak, n - nie)");
+	// char a;
+	// a = getchar();
+	// if(a == ' ' || a == '\n') a = getchar();
+	// if(a == 'n' || a == 'N') return choose_card(karty, ile, gracz, karty_na_stole, n, atut);
 
 	//sprawdzenie czy taka moze wybrac
 	int poprzedni_kolor = -1;
@@ -136,6 +140,8 @@ void remove_card(card *karty, int i)//usuniecie karty nr i
 		(karty + k) -> num = (karty + k + 1) -> num;
 		(karty + k) -> color = (karty + k + 1) -> color;
 	}
+	(karty + 12) -> num = 0;
+	(karty + 12) -> color = 0;
 }
 
 bool check_card(card *karty,int ile,card wynik,int poprzedni_kolor){
@@ -169,11 +175,11 @@ void find_winner_test(){
 	card karty[4];
 	char kolor;
 	for(int i = 0; i < 4; i++){
-		scanf("%i %c", &karty[i].num, &kolor);
+		if(scanf("%i %c", &karty[i].num, &kolor) < 2) printf(" ");
 		karty[i].color = input_color(kolor);
 	}
 	printf("Podaj atut");
-	scanf("%c", &kolor);
+	if(scanf("%c", &kolor) < 1) printf(" ");
 	int atut = input_color(kolor);
 	printf(" wygral: %i",find_winner(karty, atut));
 }
@@ -222,11 +228,11 @@ void informacje_rozgrywka(int atut)
 card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int atut)
 {
 	//wyswietlenie kart na stole
-	printf("Na stole są: \n");
-	for(int i = 0; i < n; i++){
-		print(karty_na_stole[i]);
-	}
-	printf("\n");
+	// printf("Na stole są: \n");
+	// for(int i = 0; i < n; i++){
+		// print(karty_na_stole[i]);
+	// }
+	// printf("\n");
 	
 	//wybranie karty do zagrania
 	card wynik;
@@ -243,7 +249,7 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 	if(n == 0)
 	{
 		int x = rand() % ile;
-		if(DEBUG) printf("wybrano karte nr %i\n", x);
+		// if(DEBUG) printf("wybrano karte nr %i\n", x);
 		wynik = *(karty + x);
 		remove_card(karty, x);
 		return wynik;
@@ -340,7 +346,7 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 	
 	//jesli nie ma koloru ani atutu to najnizsza z tych, ktore ma
 	int najnizsza = 15;
-	int miejsce;
+	int miejsce = -1;
 	for(int i = 0; i < ile; i++)
 	{
 		if((karty + i) -> num < najnizsza)//jesli najmniejsza do tej pory
@@ -366,7 +372,7 @@ card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int at
 
 void show_last_trick()//ostatnia lewa
 {
-	printf("Ostatnia lewa to:\n");
+	// printf("Ostatnia lewa to:\n");
 	for(int i = 0; i < 4; i++)
 	{
 		print(last_trick[i]);

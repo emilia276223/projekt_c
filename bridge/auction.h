@@ -29,7 +29,8 @@ void auction_information(int gracz, card *karty, card deal);
 int ustaw_rozgrywajacego(int zaczynajacy_licytacje);//ustawienie rozgrywajacegp
 
 
-int count_points(card *karty){
+int count_points(card *karty)
+{
 	int suma = 0;
 	for(int i = 0; i < 13; i++){
 		if((karty + i) -> num == 14){//ace
@@ -49,16 +50,22 @@ int count_points(card *karty){
 }
 
 void auction_information(int gracz, card *karty, card deal){
-	printf("Kolej gracza %i\n", gracz + 1);
+	printf("Kolej gracza %i\n\n", gracz + 1);
 	printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: (1 - 7) \noraz kolor (kier, karo, pik, trefl lub BA), albo 0 jesli pass\n");
 	printf("a to twoje karty :");
 	show_cards(karty, 13, gracz);
-	printf("Liczba twoich punktow to: %i\n", count_points(karty));
-	printf("Na ten moment zalicytowane jest:\n");
-	print(deal);
-	printf("\n");
-	printf("ostatnio zalicytowano:\n");
-	print_last_4_auction(gracz);
+	printf("Liczba twoich punktow to: %i\n\n", count_points(karty));
+	if(deal.num != 0)
+	{
+		printf("Na ten moment zalicytowane jest:\n");
+		print(deal);
+		printf("\n\n");
+	}
+	if(gracz != 0 || deal.num != 0){
+		printf("Ostatnio zalicytowano:\n");
+		print_last_4_auction(gracz);
+		printf("\n");
+	}
 	printf("Jesli chcesz uzyskać podpowiedź do licytacji napisz -1");
 	printf("\n");
 }
@@ -196,7 +203,7 @@ card naturalny_otwarcie(card *karty, card deal)
 int naturalny_odpowiedz_kolor(card *karty)
 {
 	//policzenie najdluzszego koloru i ile jest kart w pozostalych
-	int kolory[5];
+	int kolory[5] = {0,0,0,0,0};
 	int najdluzszy_kolor = policz_kolory(karty, &kolory[0]);
 
 	//pierwsza odzywka partnera (juz byla skoro odpowiadamy)
@@ -242,7 +249,7 @@ void naturalny_odpowiedz_bot(card *karty, int *punkty_p, int *suma_p, int *max_z
 {
 	//policzenie punktow partnera (na podstawie pierwszej odzywki, najmniejsze mozliwe)
 	int pierwsza_p = (nr_odzywki - 2) % 4;
-	int punkty_partnera;
+	int punkty_partnera = 0;
 	if(auction_history[pierwsza_p].num == 1){
 		if(auction_history[pierwsza_p].color != 0){//1 w kolor
 			punkty_partnera = 12;
@@ -265,9 +272,12 @@ void naturalny_odpowiedz_bot(card *karty, int *punkty_p, int *suma_p, int *max_z
 			punkty_partnera = 26;
 		}
 	}
+	else{//4 lub wiecej
+		punkty_partnera = 27;
+	}
 	
 	//policzenie sumy punktow
-	int suma_punktow;
+	int suma_punktow = 0;
 	suma_punktow = punkty_partnera + count_points(karty);
 	
 	//okreslenie wysokosci docelowej na podstawie ilosci punktow
@@ -330,7 +340,7 @@ card podpowiedz_naturalny_bot(card *karty, card deal)//odpowiednio wywola odpowi
 	if(nr_odzywki <= 1){//nie bylo jeszcze zadnej informacji od gracza z pary
 		card odp;
 		odp = naturalny_otwarcie(karty, deal);
-		print(odp);
+		// print(odp);
 		return odp;
 
 	}
@@ -348,14 +358,14 @@ card podpowiedz_naturalny_bot(card *karty, card deal)//odpowiednio wywola odpowi
 		//sprawdzam czy odp wieksza niz do tej pory zalicytowane
 		if(odp.num > deal.num || (odp.num == deal.num && odp.color < deal.color))
 		{
-			print(odp);
+			// print(odp);
 			return odp;
 		}
 		
 		//w przeciwnym przypadku
 		odp.num = -1;//pass
 		odp.color = 0;
-		print(odp);
+		// print(odp);
 		return odp;
 	}
 }
@@ -471,11 +481,14 @@ card auction_with_bot()
 				count = 0;
 				deal = zalicytowane;
 			}
+
+			clear_screen();
+			getchar();
 		}
 		
 		else//jesli kolej bota
 		{
-			printf("Gracz %i: ", player + 1);
+			// printf("Gracz %i: ", player + 1);
 			card odp = podpowiedz_naturalny_bot(&cards[player][0], deal);
 			if(odp.num == -1){//pass
 				count++;
@@ -490,8 +503,6 @@ card auction_with_bot()
 //		zalicytowano(zalicytowane);
 		
 		player = (player + 1)%4;
-		clear_screen();
-		getchar();
 	}
 	return deal;
 }
@@ -507,7 +518,7 @@ card auction_user_input(int number, card deal){
 	//jesli niepoprawny numer
 	if(number < 0 || number > 7){
 		printf("Niepoprawnie wpisana liczba, proszę podać jeszcze raz ( 0 - pass lub liczba z zakresu 1 - 7)");
-		scanf("%i", &number);
+		if(scanf("%i", &number) < 1) printf(" ");
 		return auction_user_input(number, deal);
 	}
 	//nie pass
@@ -533,9 +544,9 @@ card auction_user_input(int number, card deal){
 		color = input_color_string();
 	}
 
-	if(number < deal.num || (number == deal.num && color > deal.color)){
+	if(number < deal.num || (number == deal.num && color >= deal.color)){
 		printf("To jest mniej niż poprzednio, wiec nie mozna tego zalicytowac, sprobuj jeszcze raz: \n");
-		scanf("%i", &number);
+		if(scanf("%i", &number) < 1) printf(" ");
 		return auction_user_input(number, deal);
 	}
 	wynik.num = number;
