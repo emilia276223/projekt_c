@@ -82,7 +82,7 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 	int color = input_color_string();
 	while(color == -256 || color == 0)
 	{
-		printf("Niepoprawnie wpisano kolor, proszę wpisać jeszcze raz:");
+		printf("Niepoprawnie wpisano kolor, proszę wpisać jeszcze raz:\n");
 		color = input_color_string();
 	}
 
@@ -97,7 +97,7 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 		poprzedni_kolor = karty_na_stole[0].color;
 	}
 	if(!check_card(karty, ile, wynik, poprzedni_kolor)){
-		printf("Niepoprawnie wybrano karte (na przyklad nie posiadasz takiej lub kolor jest niepoprawny), bedziesz musiał_ podać jeszcze raz\n");
+		printf("Niepoprawnie wybrano karte (na przyklad nie posiadasz takiej lub kolor jest niepoprawny), musisz podać jeszcze raz\n");
 		return choose_card(karty, ile, gracz, karty_na_stole, n, atut);
 	}
 	
@@ -198,6 +198,171 @@ void informacje_rozgrywka(int atut)
 	printf("\n");
 }
 
+//super slaby bot
+card choose_card_bot_the_worst(card *karty, int ile, card karty_na_stole[4], int n, int atut)
+{
+	//wybranie karty do zagrania
+	card wynik;
+	if(DEBUG) printf("a\n");
+	
+	//sprawdzenie poprzedniego koloru
+	int poprzedni_kolor = -1;
+	if(n > 0){//bylo cos wczesniej dane
+		poprzedni_kolor = karty_na_stole[0].color;
+	}
+	if(DEBUG) printf("b\n");
+	
+	//jesli pierwsza karta w tej turze
+	if(n == 0)
+	{
+		int x = rand() % ile;
+		// if(DEBUG) printf("wybrano karte nr %i\n", x);
+		wynik = *(karty + x);
+		remove_card(karty, x);
+		return wynik;
+	}
+	//jesli juz cos bylo
+	
+	//sprawdzenie czy ma karte w tym kolorze
+	bool czy_ma_w_kolorze = false;
+	int pierwsza = -1;//wiem gdzie pierwsza
+	int ostatnia;//wiem ile ich jest
+	for(int i = 0; i < ile; i++)
+	{
+		if((karty + i) -> color == poprzedni_kolor)//jesli i-ta karta jest w kolorze
+		{
+			czy_ma_w_kolorze = true;
+			if(pierwsza == -1) pierwsza = i;
+			ostatnia = i;
+		}
+	}
+	if(DEBUG)
+	{
+		printf("sprawdzone czy ma w kolorze:\n");
+		if(czy_ma_w_kolorze) printf("TAK\n");
+		else printf("NIE\n");
+	}
+	
+	//jesli ma karte w tym kolorze to losuje jedna z nich
+	if(czy_ma_w_kolorze)
+	{
+		//jesli ma wygrywajaca to losowa z nich
+		
+		//jesli nie przebil nikt atutem
+		bool czy_byl_atut = false;
+		for(int i = 0; i < n; i++){
+			if(karty_na_stole[i].color == atut) czy_byl_atut = true;
+		}
+		//jesli bym atut tto najwiekszy nieprzebijajacy atut
+		if(!czy_byl_atut)//nie bylo atuta, wiec dorzucam najwyzsza nizsza z koloru
+		{
+			//maksymalna na stole:
+			int maxi = 0;
+			for(int i = 0; i < n; i++){
+				if(karty_na_stole[i].num > maxi && karty_na_stole[i].color == poprzedni_kolor){
+					maxi = karty_na_stole[i].num;
+				}
+			}
+
+			//jesli mam nizsza to najwyzsza z nich, jak nie to losowa
+			if((karty + ostatnia) -> num < maxi)
+			{
+				while((karty + pierwsza) -> num > maxi) pierwsza++;
+				//pierwsza to najwieksza nie - bijaca
+				wynik = *(karty + pierwsza);
+				remove_card(karty, pierwsza);
+				return wynik;
+			}
+			
+			//jak nie mam nizszej
+			
+			//jak ostatni i nie mam nizszej to najwyzsza
+			if(n == 3)
+			{
+				wynik = *(karty + pierwsza);
+				remove_card(karty, pierwsza);
+				return wynik;
+			}
+
+			//jesli nie ostatni to losowa:
+			int x = rand() % (ostatnia - pierwsza + 1);
+			x += pierwsza;
+			wynik = *(karty + x);
+			remove_card(karty, x);
+			return wynik;
+			
+			
+		}
+		else//byl atut
+		{
+			//najwyzsza z koloru
+			wynik = *(karty + pierwsza);
+			remove_card(karty, pierwsza);
+			return wynik;
+		}
+	}
+	
+	//jesli nie ma w kolorze to:
+
+	//jesli byl atut to dorzuca nizszy jesli ma
+	bool czy_byl_juz_atut = false;
+	int maxi_atutowa = 0;
+	for(int i = 0; i < n; i++)
+	{
+		if((karty + i) -> color == atut)
+		{
+			czy_byl_juz_atut = true;
+			if((karty + i) -> num > maxi_atutowa) maxi_atutowa = (karty + i) -> num;
+		}
+	}
+	if(czy_byl_juz_atut)
+	{
+		bool czy_ma_atut = false;
+		int pierwsza_a = -1;//wiem gdzie pierwsza
+		int ostatnia_a;//wiem ile ich jest
+		for(int i = 0; i < ile; i++)
+		{
+			if((karty + i) -> color == atut)
+			{
+				czy_ma_atut = true;
+				if(pierwsza_a == -1) pierwsza_a = i;
+				ostatnia_a = i;
+			}
+		}
+		//jesli ma atut to dorzuca najwyzszy niebijacy
+		if(czy_ma_atut)
+		{
+			//jesli ma niebijacy
+			if((karty + ostatnia_a) -> num < maxi_atutowa)
+			{
+				while((karty + pierwsza_a) -> num > maxi_atutowa) pierwsza_a ++; //znajduje najwieksza niebijca
+				remove_card(karty, pierwsza_a);
+				return *(karty + pierwsza_a);
+			}
+			//jesli nie ma to dorzucam cos innego
+		}
+		//jesli nie ma atutu to najwyzsza losowa
+	}
+	//jesli nie daje atutu to najwyzsza nieatutowa
+
+	int najwyzsza = 0;
+	int miejsce = 0;//jak nic nie znajde to dam pierwsza i tyle
+	for(int i = 0; i < ile; i++)
+	{
+		if((karty + i) -> num > najwyzsza && (karty + i) -> color != atut)
+		{
+			miejsce = i;
+			najwyzsza = (karty + i) -> num;
+		}
+	}
+	
+	wynik =  *(karty + miejsce);
+	remove_card(karty, miejsce);
+	return wynik;
+}
+
+
+//dobry bot
 card choose_card_bot(card *karty, int ile, card karty_na_stole[4], int n, int atut)
 {
 	//wybranie karty do zagrania

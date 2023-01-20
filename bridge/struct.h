@@ -8,7 +8,7 @@
 #include <wchar.h>
 #include <locale.h>
 
-#define DEBUG 1
+#define DEBUG 0
 //to pewnie potrzebuje
 struct card{
 	int num;
@@ -122,7 +122,7 @@ int number_input()
 
 	if(number[1] == '\0')//tylko jeden znak
 	{
-		if(number[0] >= '0' && number[0] <= '9') return number[0] - '0';
+		if(number[0] >= '1' && number[0] <= '9') return number[0] - '0';
 		if(number[0] == 'A' || number[0] == 'a') return 14;
 		if(number[0] == 'K' || number[0] == 'k') return 13;
 		if(number[0] == 'Q' || number[0] == 'q') return 12;
@@ -134,6 +134,7 @@ int number_input()
 	else{
 		if(strcmp(number, "10") == 0) return 10;
 		if(strcmp(number, "-1") == 0) return -1;
+		if(strcmp(number, "pass") == 0) return 0;
 		else return -256;
 	}
 }

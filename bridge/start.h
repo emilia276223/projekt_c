@@ -65,9 +65,9 @@ void game(int atut, int *score, int tryb_gry, int rozgrywajacy)
 }
 
 bool if_new_game(){
-	clear_screen();
+	// clear_screen();
 	printf("Gra zakonczona\n");
-	printf("Jeśli chcesz rozpocząć kolejną grę wpisz T, w przeciwnym wypadku wpisz inny znak\n");
+	printf("Jeśli chcesz rozpocząć kolejną grę wpisz T, w przeciwnym wypadku wpisz inny znak:\n");
 	int z;
 	z = getchar();
 	if(z == '\n' || z == ' '){
@@ -99,7 +99,7 @@ int runda_dla_4_graczy(int dealer, int n, int atut, int *score, int rozgrywajacy
 			}
 			else
 			{
-				printf("Karty dziadka:\n");
+				printf("Karty dziadka (gracz %i):\n", dziadek + 1);
 				show_cards(&cards[dziadek][0], 13 - n);
 				printf("\nTwoje karty:\n");
 				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);	
@@ -142,7 +142,7 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 			{
 				printf("Poprzednia tura:\n");
 				show_last_trick();
-				printf("Więc zebrał gracz %i\n", dealer);
+				printf("Więc zebrał gracz %i\n", dealer + 1);
 			}
 
 			//wybranie karty
@@ -153,7 +153,7 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 			}
 			else
 			{
-				printf("Karty dziadka:\n");
+				printf("Karty dziadka (gracz %i):\n", dziadek + 1);
 				show_cards(&cards[dziadek][0], 13 - n);//poprawic bo jest zle bo sie czasem o 1 za duzo wyswietla
 				printf("Twoje karty:\n");
 				karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);	
@@ -165,27 +165,40 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 		//jesli gracz jest dziadkiem
 		else if(player == 0 && player == dziadek)
 		{
+			//wyswietlenie co sie zadzialo w ostatniej runddzie
+			if(n > 0)//to nie pierwsza runda
+			{
+				printf("Poprzednia tura:\n");
+				show_last_trick();
+				printf("Więc zebrał gracz %i\n", dealer + 1);
+			}
+
 			printf("Jestes dziadkiem, wiec rozgrywajacy wybiera twoja karte\n");
 			karty_na_stole[i] = choose_card_bot(&cards[dziadek][0], 13 - n, karty_na_stole, i, atut);
 			// printf("\nGracz %i wybrał kartę :", rozgrywajacy + 1);
 			// print(karty_na_stole[i]);
-		getchar();
-		clear_screen();
+			printf("Wpisz enter: ");
+			
+			int x;
+			x = getchar();
+			while(x != '\n') x = getchar(); //Leon-proof
+			clear_screen();
 		}
 		
 		//jesli gracz jest rozgrywajacym i kolej dziadka
 		else if(player == 2 && rozgrywajacy == 0)
 		{
-			printf("Jestes rozgrywajacym wiec wybierasz, jaką kartę na położyć dziadek:\n");
 			if(n > 0)//to nie pierwsza runda
 			{
 				printf("Poprzednia tura:\n");
 				show_last_trick();
-				printf("Więc zebrał gracz %i\n", dealer);
+				printf("Więc zebrał gracz %i\n\n", dealer + 1);
 			}
+
+			printf("Jestes rozgrywajacym wiec wybierasz, jaką kartę na położyć dziadek:\n\n");
 			printf("Dla przypomnienia Twoje karty:\n");
 			show_cards(&cards[0][0], 13 - n);
-			printf("\n A to karty dziadka, wybierz jedną z nich:\n");
+			printf("\n A to karty dziadka (gracz %i), wybierz jedną z nich:\n", dziadek + 1);
 			karty_na_stole[i] = choose_card(&cards[player][0], 13 - n, player, karty_na_stole, i, atut);
 		getchar();
 		clear_screen();
@@ -196,8 +209,8 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 		{
 			//tutaj nie ma znaczenia czy ktos jest dziadkiem czy rozgrywajacym, bo i tak losuje karte
 			//bot i tak nie sugeruje sie innymi kartami		
-			// printf("Ruch gracza %i\n", player + 1);		
-			karty_na_stole[i] = choose_card_bot(&cards[player][0], 13 - n, karty_na_stole, i, atut);
+			if(player == 3) karty_na_stole[i] = choose_card_bot_the_worst(&cards[player][0], 13 - n, karty_na_stole, i, atut);
+			else karty_na_stole[i] = choose_card_bot(&cards[player][0], 13 - n, karty_na_stole, i, atut);
 			// printf("\nGracz %i wybrał kartę :", player + 1);
 			// print(karty_na_stole[i]);
 		}
@@ -232,7 +245,7 @@ void new_game()
 	
 	//ustaleniu trybu gry
 	int tryb_gry = 0;//4 graczy
-	printf("Jesli chcesz zagrac z komputerem wpisz K");
+	printf("Jesli chcesz zagrac z komputerem wpisz K:\n");
 	char a = getchar();
 	if(a == ' ' || a == '\n') getchar();
 	if(a == 'k' || a == 'K') tryb_gry = 1;//z komputerem
@@ -251,7 +264,7 @@ void new_game()
 	//sprawdzenie czy bedzie rozgrywka
 	if(deal.num == 0){
 		printf("Licytacja zakonczona niepowodzeniem\n\n");
-		getchar();
+		// getchar();
 		return;
 	}
 	//ustawienia poczatkowe rozgrywki

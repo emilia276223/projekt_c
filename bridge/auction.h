@@ -51,8 +51,8 @@ int count_points(card *karty)
 
 void auction_information(int gracz, card *karty, card deal){
 	printf("Kolej gracza %i\n\n", gracz + 1);
-	printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: (1 - 7) \noraz kolor (kier, karo, pik, trefl lub BA), albo 0 jesli pass\n");
-	printf("a to twoje karty :\n");
+	printf("Wpisz odpowiednio jak wysoko chcesz zalicytować: pass lub 1 - 7 oraz kolor (kier, karo, pik, trefl lub BA)\n");
+	printf("To twoje karty :\n");
 	show_cards(karty, 13);
 	printf("Liczba twoich punktow to: %i\n\n", count_points(karty));
 	if(deal.num != 0)
