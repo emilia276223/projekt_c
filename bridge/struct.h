@@ -45,7 +45,12 @@ void reset();
 
 
 void red () {
-    printf("\033[1;31m");   
+    // printf("\033[1;31m");   
+	printf("\033[0;91m");
+}
+
+void fancy_red(){
+	printf("\033[6;91m");
 }
 
 void gray() {
@@ -54,6 +59,10 @@ void gray() {
 
 void reset () {
 	printf("\033[0m");
+}
+
+void fancy_greeen(){
+	printf("\033[6;92m");
 }
 
 void print_color(int k)
@@ -86,9 +95,14 @@ void print(card karta)
 			printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
 			reset();
 		}
-		if(karta.color == 2 || karta.color == 3)
+		else if(karta.color == 2 || karta.color == 3)
 		{
 			red();
+			printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
+			reset();
+		}
+		else{
+			fancy_greeen();
 			printf("(%s %s)",wartosc[karta.num], znaczek[karta.color]);
 			reset();
 		}
