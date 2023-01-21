@@ -174,7 +174,7 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 			}
 
 			printf("Jestes dziadkiem, wiec rozgrywajacy wybiera twoja karte\n");
-			karty_na_stole[i] = choose_card_bot(&cards[dziadek][0], 13 - n, karty_na_stole, i, atut);
+			karty_na_stole[i] = choose_card_bot_the_worst(&cards[dziadek][0], 13 - n, karty_na_stole, i, atut);
 			// printf("\nGracz %i wybrał kartę :", rozgrywajacy + 1);
 			// print(karty_na_stole[i]);
 			printf("Wpisz enter: ");
@@ -209,7 +209,7 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 		{
 			//tutaj nie ma znaczenia czy ktos jest dziadkiem czy rozgrywajacym, bo i tak losuje karte
 			//bot i tak nie sugeruje sie innymi kartami		
-			if(player == 3) karty_na_stole[i] = choose_card_bot_the_worst(&cards[player][0], 13 - n, karty_na_stole, i, atut);
+			if(player == 2) karty_na_stole[i] = choose_card_bot_the_worst(&cards[player][0], 13 - n, karty_na_stole, i, atut);
 			else karty_na_stole[i] = choose_card_bot(&cards[player][0], 13 - n, karty_na_stole, i, atut);
 			// printf("\nGracz %i wybrał kartę :", player + 1);
 			// print(karty_na_stole[i]);
