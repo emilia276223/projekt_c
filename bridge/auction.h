@@ -21,7 +21,7 @@ void naturalny_odpowiedz(card *karty);//odpowiedz w naturalnym dla uzytkownika (
 card naturalny_otwarcie(card *karty, card deal);//podpowiedz w naturalnym dla uzytkownika na otwarcie
 int naturalny_odpowiedz_kolor(card *karty);//dla bota zeby wiedzial w jaki kolor grac
 void podpowiedz_naturalny(card *karty,card deal);//odpowiednio wywola odpowiednia rzecz
-card podpowiedz_naturalny_bot(card *karty, card deal);//odpowiednio wywola odpowiednia rzecz
+card podpowiedz_naturalny_bot(card *karty, card deal, int player);//odpowiednio wywola odpowiednia rzecz
 card auction_for_4_players();//licytacja gdy jest 4 graczy
 card auction_with_bot();//gdy 1 gracz i 3 boty
 void auction_clear();//wyczyszczenie danych
@@ -335,7 +335,7 @@ void podpowiedz_naturalny(card *karty, card deal)
 }
 
 
-card podpowiedz_naturalny_bot(card *karty, card deal)//odpowiednio wywola odpowiednia rzecz
+card podpowiedz_naturalny_bot(card *karty, card deal, int player)//odpowiednio wywola odpowiednia rzecz
 {	
 	if(nr_odzywki <= 1){//nie bylo jeszcze zadnej informacji od gracza z pary
 		card odp;
@@ -348,6 +348,7 @@ card podpowiedz_naturalny_bot(card *karty, card deal)//odpowiednio wywola odpowi
 		int num;
 		int a;//tych rzeczy nie potrzebuje, wiec moga sie nadpisac
 		naturalny_odpowiedz_bot(karty, &a, &a, &num);//chce zagrac na wysokosci max_zagranie bo skoro mozna to czemu nie
+		if(player == 3) num ++;
 		
 		//sprawdzam w jaki kolor chce grac
 		int color = naturalny_odpowiedz_kolor(karty);
@@ -482,7 +483,7 @@ card auction_with_bot()
 		else//jesli kolej bota
 		{
 			// printf("Gracz %i: ", player + 1);
-			card odp = podpowiedz_naturalny_bot(&cards[player][0], deal);
+			card odp = podpowiedz_naturalny_bot(&cards[player][0], deal, player);
 			if(odp.num == -1){//pass
 				count++;
 			}

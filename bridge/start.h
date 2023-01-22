@@ -142,7 +142,7 @@ int runda_z_botem(int dealer, int n, int atut, int *score, int rozgrywajacy, boo
 			{
 				printf("Poprzednia tura:\n");
 				show_last_trick();
-				printf("Więc zebrał gracz %i\n", dealer + 1);
+				printf("Więc zebrał gracz %i\n\n\n", dealer + 1);
 			}
 
 			//wybranie karty
@@ -285,7 +285,7 @@ void new_game()
 	
 	//wyswietlenie wynikow
 	printf("Gra zakonczona, wyniki to: %i, %i, %i, %i, tryb_gry = %i\n", score[0], score[1], score[2], score[3], tryb_gry);
-	printf("Para 1-3 zebrala %i lew, a para 2-4 - %i\n", score[0] + score[2], score[1] + score[3]);
+	printf("Para 1-3 zebrala %i lew, a para 2-4 zebrała %i lew\n", score[0] + score[2], score[1] + score[3]);
 	//trzeba zrobic sprawdzenie czy ugrane
 	czy_ugrane(deal, &score[0], rozgrywajacy);
 	getchar();
@@ -305,7 +305,9 @@ void czy_ugrane(card deal,int *score, int rozgrywajacy)
 
 	if(lewy_w_parze >= deal.num + 6)
 	{
-		printf("Zalicytowany kontrakt został ugrany!!!");
+		printf("Zalicytowany kontrakt został ugrany, wygrała para ");
+		if(rozgrywajacy % 2 == 0) printf("1 - 3\n");
+		else printf("2 - 4\n");
 	}
 	else
 	{
