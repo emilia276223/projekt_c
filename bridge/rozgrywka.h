@@ -24,6 +24,7 @@ card choose_card(card *karty, int ile, int gracz, card karty_na_stole[], int n, 
 		printf("Na stole są: \n");
 		for(int i = 0; i < n; i++){
 			print(karty_na_stole[i]);
+			printf("\n");
 		}
 		printf("\n\n");
 	}

@@ -311,7 +311,9 @@ void czy_ugrane(card deal,int *score, int rozgrywajacy)
 	}
 	else
 	{
-		printf("Zalicytowany kontrakt nie został ugrany :(\n");
+		printf("Zalicytowany kontrakt ");
+		print(deal);
+		printf(" nie został ugrany :(\n");
 	}
 }
 
