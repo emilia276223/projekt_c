@@ -1,5 +1,5 @@
 # projekt_c
-projekt z c (wszystkie pomysły)
+projekt z c - brydż
 
 zasady brydża:
 https://pl.wikipedia.org/wiki/Bryd%C5%BC
